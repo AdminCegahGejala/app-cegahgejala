@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CegahGejala — Kenali tanda. Sadari risiko. Lakukan pencegahan.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=SF+Pro+Display:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #07091A;
+    --bg2: #0C1128;
+    --glass: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.13);
+    --glass-hover: rgba(255,255,255,0.12);
+    --accent: #00D4AA;
+    --accent2: #00A88A;
+    --accent-glow: rgba(0,212,170,0.25);
+    --accent-soft: rgba(0,212,170,0.12);
+    --warn: #FF8C42;
+    --warn-soft: rgba(255,140,66,0.12);
+    --danger: #FF5C87;
+    --danger-soft: rgba(255,92,135,0.12);
+    --blue: #4F8EF7;
+    --blue-soft: rgba(79,142,247,0.12);
+    --purple: #A78BFA;
+    --purple-soft: rgba(167,139,250,0.12);
+    --text: #F0F4FF;
+    --text2: rgba(240,244,255,0.65);
+    --text3: rgba(240,244,255,0.38);
+    --radius: 20px;
+    --radius-sm: 14px;
+    --blur: blur(24px);
+    --nav-h: 80px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: calc(var(--nav-h) + 16px);
+  }
+
+  /* BG mesh */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(0,212,170,0.09) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 80% 90%, rgba(79,142,247,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 60% 40%, rgba(167,139,250,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+  .screen.active { display: block; }
+
+  /* ── SCROLLABLE CONTENT ── */
+  .scroll-area { padding: 0 16px 24px; max-width: 480px; margin: 0 auto; }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px 8px;
+    font-size: 12px; font-weight: 600; color: var(--text2);
+    letter-spacing: 0.01em;
+    position: relative; z-index: 2;
+  }
+  .status-time { font-size: 15px; font-weight: 700; color: var(--text); }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    padding: 8px 20px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 2;
+  }
+  .topbar-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); }
+  .topbar-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .topbar-logo { display: flex; align-items: center; gap: 8px; }
+  .logo-dot {
+    width: 32px; height: 32px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #00A8CC);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .logo-text span { color: var(--accent); }
+
+  .avatar-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.15);
+  }
+
+  /* ── GLASS CARD ── */
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+  }
+  .card:active { transform: scale(0.985); }
+
+  /* ── HERO CARD ── */
+  .hero-card {
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(0,212,170,0.12), rgba(79,142,247,0.08));
+    border-color: rgba(0,212,170,0.2);
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(0,212,170,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.7; }
+  }
+  .hero-greeting { font-size: 13px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+  .hero-title { font-size: 22px; font-weight: 800; line-height: 1.25; margin-bottom: 8px; letter-spacing: -0.3px; }
+  .hero-subtitle { font-size: 13.5px; color: var(--text2); line-height: 1.5; }
+  .hero-pulse {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-soft); border: 1px solid rgba(0,212,170,0.25);
+    border-radius: 100px; padding: 6px 14px; margin-top: 16px;
+    font-size: 12px; font-weight: 600; color: var(--accent); cursor: pointer;
+  }
+  .pulse-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    animation: blink 1.4s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--accent);
+  }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 11px; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin: 20px 0 10px;
+  }
+
+  /* ── QUICK ACTION GRID ── */
+  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .quick-card {
+    padding: 18px 16px;
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative; overflow: hidden;
+  }
+  .quick-card .icon {
+    width: 42px; height: 42px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .quick-card .q-title { font-size: 14px; font-weight: 700; line-height: 1.2; }
+  .quick-card .q-desc { font-size: 11.5px; color: var(--text2); line-height: 1.4; }
+
+  .qc-green .icon { background: var(--accent-soft); }
+  .qc-orange .icon { background: var(--warn-soft); }
+  .qc-blue .icon { background: var(--blue-soft); }
+  .qc-purple .icon { background: var(--purple-soft); }
+  .qc-green { border-color: rgba(0,212,170,0.2); }
+  .qc-orange { border-color: rgba(255,140,66,0.2); }
+  .qc-blue { border-color: rgba(79,142,247,0.2); }
+  .qc-purple { border-color: rgba(167,139,250,0.2); }
+
+  /* ── REMINDER CARD ── */
+  .reminder-card {
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer; margin-bottom: 16px;
+    background: linear-gradient(90deg, rgba(0,212,170,0.08), transparent);
+    border-color: rgba(0,212,170,0.18);
+  }
+  .reminder-icon { font-size: 28px; flex-shrink: 0; }
+  .reminder-label { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .reminder-text { font-size: 14px; font-weight: 600; margin-top: 2px; line-height: 1.35; }
+  .reminder-arrow { margin-left: auto; color: var(--text3); font-size: 18px; }
+
+  /* ── EDU CARD ── */
+  .edu-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .edu-card {
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+  }
+  .edu-thumb {
+    width: 52px; height: 52px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .edu-cat { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
+  .edu-title { font-size: 14px; font-weight: 600; margin-top: 3px; line-height: 1.3; }
+  .edu-time { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  /* ── CEK SCREEN ── */
+  .cek-list { display: flex; flex-direction: column; gap: 10px; }
+  .cek-item {
+    padding: 20px 18px;
+    display: flex; align-items: center; gap: 16px;
+    cursor: pointer;
+    position: relative; overflow: hidden;
+  }
+  .cek-item::after {
+    content: '›';
+    position: absolute; right: 18px;
+    color: var(--text3); font-size: 22px;
+    line-height: 1;
+  }
+  .cek-icon {
+    width: 50px; height: 50px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .cek-name { font-size: 16px; font-weight: 700; }
+  .cek-desc { font-size: 12.5px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+
+  /* ── PANTAU SCREEN ── */
+  .journal-input-card {
+    padding: 20px;
+    margin-bottom: 16px;
+    border-color: rgba(0,212,170,0.2);
+    background: linear-gradient(135deg, rgba(0,212,170,0.07), rgba(0,0,0,0));
+  }
+  .journal-label { font-size: 13px; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  .journal-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .journal-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+  .body-parts { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .body-tag {
+    background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 100px; padding: 7px 14px;
+    font-size: 12.5px; font-weight: 500; cursor: pointer;
+    transition: all 0.15s;
+    backdrop-filter: var(--blur);
+  }
+  .body-tag.active {
+    background: var(--accent-soft); border-color: rgba(0,212,170,0.4);
+    color: var(--accent); font-weight: 700;
+  }
+  .intensity-row { display: flex; gap: 6px; margin-bottom: 20px; }
+  .int-dot {
+    flex: 1; height: 6px; border-radius: 3px;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .int-dot.filled { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+  .int-label { font-size: 12px; color: var(--text2); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #00A8CC);
+    border: none; border-radius: 14px;
+    padding: 14px; width: 100%;
+    font-size: 15px; font-weight: 700; color: #07091A;
+    cursor: pointer; letter-spacing: -0.2px;
+    transition: all 0.2s; box-shadow: 0 4px 20px var(--accent-glow);
+  }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .trend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .trend-card { padding: 18px 16px; cursor: pointer; }
+  .trend-num { font-size: 28px; font-weight: 800; line-height: 1; }
+  .trend-num span { font-size: 14px; font-weight: 500; color: var(--text2); margin-left: 3px; }
+  .trend-lbl { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .trend-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 700;
+    border-radius: 100px; padding: 3px 8px; margin-top: 8px;
+  }
+  .badge-green { background: var(--accent-soft); color: var(--accent); }
+  .badge-warn { background: var(--warn-soft); color: var(--warn); }
+  .badge-danger { background: var(--danger-soft); color: var(--danger); }
+
+  .mini-chart { display: flex; align-items: flex-end; gap: 4px; height: 40px; margin-top: 10px; }
+  .bar {
+    flex: 1; border-radius: 3px;
+    background: var(--glass-border);
+    transition: all 0.3s;
+    position: relative;
+  }
+  .bar.filled { background: var(--accent); opacity: 0.7; }
+  .bar.today { background: var(--accent); opacity: 1; box-shadow: 0 0 10px var(--accent-glow); }
+
+  .plan-card { padding: 20px; margin-bottom: 10px; cursor: pointer; }
+  .plan-day { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; }
+  .plan-title { font-size: 16px; font-weight: 700; margin: 4px 0 10px; }
+  .plan-steps { display: flex; flex-direction: column; gap: 8px; }
+  .plan-step {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13.5px; color: var(--text2);
+  }
+  .plan-step .check {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1.5px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0;
+  }
+  .plan-step.done .check { background: var(--accent); border-color: var(--accent); color: #07091A; font-weight: 700; }
+  .plan-step.done { color: var(--text3); text-decoration: line-through; }
+
+  /* ── KELUARGA SCREEN ── */
+  .member-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
+  .member-scroll::-webkit-scrollbar { display: none; }
+  .member-chip {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    flex-shrink: 0; cursor: pointer;
+  }
+  .member-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    border: 2px solid var(--glass-border);
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    transition: all 0.15s;
+  }
+  .member-chip.active .member-avatar { border-color: var(--accent); box-shadow: 0 0 14px var(--accent-glow); }
+  .member-name { font-size: 11px; color: var(--text2); font-weight: 500; }
+  .add-member .member-avatar { border-style: dashed; }
+
+  .radar-card { padding: 20px; margin-bottom: 10px; }
+  .radar-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .radar-who { font-size: 18px; font-weight: 800; }
+  .radar-since { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .signal-badge {
+    padding: 5px 12px; border-radius: 100px; font-size: 12px; font-weight: 700;
+  }
+  .sig-watch { background: var(--warn-soft); color: var(--warn); }
+  .sig-ok { background: var(--accent-soft); color: var(--accent); }
+  .signal-list { display: flex; flex-direction: column; gap: 10px; }
+  .signal-item { display: flex; align-items: center; gap: 12px; }
+  .sig-icon { font-size: 20px; width: 36px; text-align: center; flex-shrink: 0; }
+  .sig-text { font-size: 14px; font-weight: 500; flex: 1; }
+  .sig-date { font-size: 11px; color: var(--text3); }
+  .sig-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .dot-warn { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+  .dot-ok { background: var(--accent); }
+
+  /* ── PROFIL SCREEN ── */
+  .profile-hero { padding: 28px 20px; text-align: center; margin-bottom: 16px; }
+  .profile-avatar-lg {
+    width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 14px;
+    background: linear-gradient(135deg, var(--accent), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 800;
+    border: 3px solid rgba(255,255,255,0.15);
+    box-shadow: 0 0 30px var(--accent-glow);
+  }
+  .profile-name { font-size: 22px; font-weight: 800; }
+  .profile-email { font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .profile-badges { display: flex; justify-content: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .p-badge { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 100px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--text2); }
+
+  .setting-group { margin-bottom: 16px; }
+  .setting-item {
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .setting-item:last-child { border-bottom: none; }
+  .setting-group .card { overflow: hidden; }
+  .setting-icon { font-size: 22px; width: 34px; text-align: center; flex-shrink: 0; }
+  .setting-text { flex: 1; }
+  .setting-name { font-size: 15px; font-weight: 600; }
+  .setting-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .setting-arrow { color: var(--text3); font-size: 16px; }
+  .toggle {
+    width: 44px; height: 26px; border-radius: 13px;
+    background: var(--accent); position: relative; cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: white; transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .toggle.off { background: var(--glass); border: 1px solid var(--glass-border); }
+  .toggle.off::after { left: 21px; }
+
+  .disclaimer-card {
+    padding: 16px 18px; margin-bottom: 16px;
+    background: var(--warn-soft); border-color: rgba(255,140,66,0.2);
+    font-size: 12.5px; color: rgba(255,200,150,0.85); line-height: 1.6;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    background: rgba(7,9,26,0.8);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: space-around;
+    padding: 0 8px 8px;
+    z-index: 100;
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 16px; border-radius: 16px; cursor: pointer;
+    transition: all 0.2s; flex: 1;
+    min-width: 0;
+  }
+  .nav-item:active { transform: scale(0.92); }
+  .nav-icon { font-size: 22px; line-height: 1; transition: all 0.2s; }
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--text3); transition: all 0.2s; white-space: nowrap; }
+  .nav-item.active .nav-label { color: var(--accent); }
+  .nav-item.active .nav-icon { filter: drop-shadow(0 0 6px var(--accent)); }
+  .nav-pip {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    transition: all 0.2s;
+    position: absolute;
+    bottom: 4px;
+  }
+  .nav-item.active .nav-pip { opacity: 1; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(7,9,26,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: flex-end;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet {
+    background: #0F1530;
+    border: 1px solid var(--glass-border);
+    border-radius: 28px 28px 0 0;
+    padding: 0 20px 40px;
+    width: 100%; max-height: 85vh;
+    overflow-y: auto;
+    animation: slide-up 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle {
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--glass-border); margin: 12px auto 20px;
+  }
+  .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .modal-sub { font-size: 14px; color: var(--text2); line-height: 1.5; margin-bottom: 24px; }
+
+  .q-step { margin-bottom: 22px; }
+  .q-label { font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 10px; letter-spacing: 0.01em; }
+  .q-options { display: flex; flex-direction: column; gap: 8px; }
+  .q-opt {
+    background: var(--glass); border: 1.5px solid var(--glass-border);
+    border-radius: 14px; padding: 14px 16px;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .q-opt:hover { background: var(--glass-hover); }
+  .q-opt.selected { background: var(--accent-soft); border-color: rgba(0,212,170,0.4); color: var(--accent); font-weight: 700; }
+  .q-opt .opt-radio {
+    width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--glass-border);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .q-opt.selected .opt-radio { background: var(--accent); border-color: var(--accent); }
+  .q-opt.selected .opt-radio::after { content: '✓'; font-size: 11px; color: #07091A; font-weight: 900; }
+
+  .result-box {
+    background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(0,168,200,0.05));
+    border: 1px solid rgba(0,212,170,0.25);
+    border-radius: 18px; padding: 20px; margin-top: 20px;
+  }
+  .result-title { font-size: 16px; font-weight: 800; color: var(--accent); margin-bottom: 12px; }
+  .result-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+  .result-row .r-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .result-row .r-text { font-size: 13.5px; line-height: 1.5; }
+  .result-row .r-text strong { color: var(--text); font-weight: 700; }
+
+  .redflag-box {
+    background: var(--danger-soft); border: 1px solid rgba(255,92,135,0.2);
+    border-radius: 14px; padding: 16px; margin-top: 12px;
+  }
+  .redflag-title { font-size: 13px; font-weight: 800; color: var(--danger); margin-bottom: 10px; }
+  .redflag-item { font-size: 13px; color: rgba(255,200,210,0.85); margin-bottom: 6px; display: flex; gap: 8px; }
+
+  /* HOAX CHECKER */
+  .hoax-area {
+    width: 100%; background: var(--glass); border: 1px solid var(--glass-border);
+    border-radius: 16px; padding: 16px; color: var(--text);
+    font-size: 14px; font-family: inherit; line-height: 1.6;
+    resize: none; outline: none; min-height: 120px;
+    transition: all 0.2s;
+  }
+  .hoax-area:focus { border-color: rgba(0,212,170,0.4); background: var(--glass-hover); }
+  .verdict-card {
+    border-radius: 16px; padding: 18px; margin-top: 16px;
+  }
+  .v-mitos { background: var(--danger-soft); border: 1px solid rgba(255,92,135,0.25); }
+  .v-konteks { background: var(--warn-soft); border: 1px solid rgba(255,140,66,0.25); }
+  .v-valid { background: var(--accent-soft); border: 1px solid rgba(0,212,170,0.25); }
+  .verdict-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .v-mitos .verdict-label { color: var(--danger); }
+  .v-konteks .verdict-label { color: var(--warn); }
+  .v-valid .verdict-label { color: var(--accent); }
+  .verdict-title { font-size: 17px; font-weight: 800; margin-bottom: 10px; }
+  .verdict-text { font-size: 13.5px; color: var(--text2); line-height: 1.6; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 2px; }
+
+  /* animations */
+  .fade-in { animation: fade-in 0.4s ease both; }
+  @keyframes fade-in { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform:none; } }
+
+  .chips-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; margin-bottom: 12px; }
+  .chips-row::-webkit-scrollbar { display: none; }
+  .chip { padding: 7px 14px; border-radius: 100px; font-size: 12.5px; font-weight: 600; cursor: pointer; flex-shrink: 0; background: var(--glass); border: 1px solid var(--glass-border); color: var(--text2); transition: all 0.15s; }
+  .chip.active { background: var(--accent-soft); border-color: rgba(0,212,170,0.4); color: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════ SCREEN: BERANDA ════════════ -->
+<div class="screen active" id="s-beranda">
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <span>🔋 ●●●●</span>
+  </div>
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-dot">🌿</div>
+      <div>
+        <div class="logo-text">Cegah<span>Gejala</span></div>
+      </div>
+    </div>
+    <div class="avatar-btn" onclick="navTo('profil')">R</div>
+  </div>
+  <div class="scroll-area fade-in">
+
+    <div class="card hero-card">
+      <div class="hero-greeting">Selamat pagi, Rafi 👋</div>
+      <div class="hero-title">Yuk cek sinyal<br>tubuhmu hari ini</div>
+      <div class="hero-subtitle">Kenali tanda. Sadari risiko. Lakukan pencegahan.</div>
+      <div class="hero-pulse" onclick="openModal('modal-cegah')">
+        <div class="pulse-dot"></div>
+        Mulai cek sekarang
+      </div>
+    </div>
+
+    <div class="section-label">Tindakan Cepat</div>
+    <div class="quick-grid">
+      <div class="card quick-card qc-green" onclick="navTo('cek'); setTimeout(()=>openModal('modal-cegah'),200)">
+        <div class="icon">🛡️</div>
+        <div>
+          <div class="q-title">Cegah Dulu</div>
+          <div class="q-desc">Cek risiko dari kebiasaan harianmu</div>
+        </div>
+      </div>
+      <div class="card quick-card qc-orange" onclick="navTo('cek'); setTimeout(()=>openModal('modal-gejala'),200)">
+        <div class="icon">🔍</div>
+        <div>
+          <div class="q-title">Gejala Awal</div>
+          <div class="q-desc">Kenali keluhan sebelum makin berat</div>
+        </div>
+      </div>
+      <div class="card quick-card qc-blue" onclick="navTo('cek'); setTimeout(()=>openModal('modal-hoax'),200)">
+        <div class="icon">🔎</div>
+        <div>
+          <div class="q-title">Cek Hoax</div>
+          <div class="q-desc">Verifikasi pesan WA kesehatanmu</div>
+        </div>
+      </div>
+      <div class="card quick-card qc-purple" onclick="navTo('keluarga')">
+        <div class="icon">👨‍👩‍👧</div>
+        <div>
+          <div class="q-title">Radar Ortu</div>
+          <div class="q-desc">Pantau perubahan pada keluarga</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reminder-card" onclick="navTo('pantau')">
+      <div class="reminder-icon">📋</div>
+      <div>
+        <div class="reminder-label">Pengingat Hari Ini</div>
+        <div class="reminder-text">Kamu belum mencatat sinyal tubuh hari ini</div>
+      </div>
+      <div class="reminder-arrow">›</div>
+    </div>
+
+    <div class="section-label">Edukasi Untukmu</div>
+    <div class="edu-row">
+      <div class="card edu-card">
+        <div class="edu-thumb" style="background: var(--accent-soft);">🫁</div>
+        <div>
+          <div class="edu-cat" style="color:var(--accent)">Gejala Awal</div>
+          <div class="edu-title">Kenapa dada terasa berat setelah makan besar?</div>
+          <div class="edu-time">4 menit baca</div>
+        </div>
+      </div>
+      <div class="card edu-card">
+        <div class="edu-thumb" style="background: var(--warn-soft);">🧠</div>
+        <div>
+          <div class="edu-cat" style="color:var(--warn)">Pencegahan</div>
+          <div class="edu-title">5 kebiasaan malam yang diam-diam ganggu lambung</div>
+          <div class="edu-time">3 menit baca</div>
+        </div>
+      </div>
+      <div class="card edu-card">
+        <div class="edu-thumb" style="background: var(--blue-soft);">💊</div>
+        <div>
+          <div class="edu-cat" style="color:var(--blue)">Cek Hoax</div>
+          <div class="edu-title">Benarkah minum air dingin bikin darah kental?</div>
+          <div class="edu-time">2 menit baca</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: CEK ════════════ -->
+<div class="screen" id="s-cek">
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <span>🔋 ●●●●</span>
+  </div>
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Cek</div>
+      <div class="topbar-sub">Periksa kebiasaan, gejala & informasi</div>
+    </div>
+  </div>
+  <div class="scroll-area fade-in">
+
+    <div class="chips-row">
+      <div class="chip active">Semua</div>
+      <div class="chip">Pencegahan</div>
+      <div class="chip">Gejala</div>
+      <div class="chip">Informasi</div>
+      <div class="chip">Tradisional</div>
+    </div>
+
+    <div class="cek-list">
+
+      <div class="card cek-item" onclick="openModal('modal-cegah')">
+        <div class="cek-icon" style="background:var(--accent-soft)">🛡️</div>
+        <div>
+          <div class="cek-name">Cegah Dulu</div>
+          <div class="cek-desc">Peta risiko dari kebiasaan harianmu sebelum ada gejala</div>
+        </div>
+      </div>
+
+      <div class="card cek-item" onclick="openModal('modal-gejala')">
+        <div class="cek-icon" style="background:var(--warn-soft)">🔍</div>
+        <div>
+          <div class="cek-name">Gejala Awal</div>
+          <div class="cek-desc">Pahami keluhan yang mulai dirasakan dengan aman</div>
+        </div>
+      </div>
+
+      <div class="card cek-item" onclick="openModal('modal-hoax')">
+        <div class="cek-icon" style="background:var(--blue-soft)">🔎</div>
+        <div>
+          <div class="cek-name">Cek Hoax Kesehatan</div>
+          <div class="cek-desc">Verifikasi pesan forward WhatsApp dalam 30 detik</div>
+        </div>
+      </div>
+
+      <div class="card cek-item" onclick="openModal('modal-kerokan')">
+        <div class="cek-icon" style="background:var(--purple-soft)">🌿</div>
+        <div>
+          <div class="cek-name">Cek Kerokan-mu</div>
+          <div class="cek-desc">Kapan kerokan, kompres, atau jamu boleh dilakukan?</div>
+        </div>
+      </div>
+
+      <div class="card cek-item" onclick="openModal('modal-diabaikan')">
+        <div class="cek-icon" style="background:var(--danger-soft)">⚠️</div>
+        <div>
+          <div class="cek-name">Kalau Diabaikan</div>
+          <div class="cek-desc">Simulasi risiko jika kebiasaan buruk terus berlanjut</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: PANTAU ════════════ -->
+<div class="screen" id="s-pantau">
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <span>🔋 ●●●●</span>
+  </div>
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Pantau</div>
+      <div class="topbar-sub">Catat pola sinyal tubuhmu</div>
+    </div>
+  </div>
+  <div class="scroll-area fade-in">
+
+    <div class="trend-grid">
+      <div class="card trend-card">
+        <div class="trend-num" style="color:var(--accent)">12 <span>hari</span></div>
+        <div class="trend-lbl">Streak pencatatan</div>
+        <div class="trend-badge badge-green">↑ Konsisten</div>
+      </div>
+      <div class="card trend-card">
+        <div class="trend-num" style="color:var(--warn)">3 <span>keluhan</span></div>
+        <div class="trend-lbl">Bulan ini</div>
+        <div class="trend-badge badge-warn">Perlu dipantau</div>
+      </div>
+    </div>
+
+    <div class="section-label">Jurnal Sinyal Tubuh</div>
+    <div class="card journal-input-card">
+      <div class="journal-label">📝 Catat hari ini</div>
+      <div class="journal-title">Ada yang dirasakan?</div>
+      <div class="journal-sub">Pilih area tubuh yang tidak nyaman</div>
+      <div class="body-parts">
+        <div class="body-tag" onclick="this.classList.toggle('active')">🫁 Dada</div>
+        <div class="body-tag active" onclick="this.classList.toggle('active')">🫀 Lambung</div>
+        <div class="body-tag" onclick="this.classList.toggle('active')">🦴 Punggung</div>
+        <div class="body-tag" onclick="this.classList.toggle('active')">🧠 Kepala</div>
+        <div class="body-tag" onclick="this.classList.toggle('active')">🦵 Kaki</div>
+        <div class="body-tag" onclick="this.classList.toggle('active')">💪 Lengan</div>
+      </div>
+      <div class="int-label">
+        <span>Intensitas keluhan</span>
+        <span style="color:var(--warn)">Sedang</span>
+      </div>
+      <div class="intensity-row" id="int-row">
+        <div class="int-dot filled" onclick="setIntensity(1)"></div>
+        <div class="int-dot filled" onclick="setIntensity(2)"></div>
+        <div class="int-dot filled" onclick="setIntensity(3)"></div>
+        <div class="int-dot" onclick="setIntensity(4)"></div>
+        <div class="int-dot" onclick="setIntensity(5)"></div>
+      </div>
+      <button class="btn-primary">Simpan Catatan Hari Ini</button>
+    </div>
+
+    <div class="section-label">Tren 7 Hari Terakhir</div>
+    <div class="card" style="padding:18px;">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">Intensitas keluhan</div>
+      <div class="mini-chart">
+        <div class="bar filled" style="height:30%"></div>
+        <div class="bar filled" style="height:55%"></div>
+        <div class="bar filled" style="height:40%"></div>
+        <div class="bar filled" style="height:70%"></div>
+        <div class="bar filled" style="height:35%"></div>
+        <div class="bar filled" style="height:20%"></div>
+        <div class="bar today" style="height:45%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--text3)">
+        <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span style="color:var(--accent)">Hari ini</span>
+      </div>
+    </div>
+
+    <div class="section-label">Prevention Plan</div>
+    <div class="card plan-card">
+      <div class="plan-day">Hari 4 dari 7</div>
+      <div class="plan-title">Perbaiki Pola Makan & Postur</div>
+      <div class="plan-steps">
+        <div class="plan-step done">
+          <div class="check">✓</div>
+          Makan 3x sehari pada jam teratur
+        </div>
+        <div class="plan-step done">
+          <div class="check">✓</div>
+          Jeda 30 menit setelah makan sebelum berbaring
+        </div>
+        <div class="plan-step">
+          <div class="check"></div>
+          Stretching punggung 10 menit sore ini
+        </div>
+        <div class="plan-step">
+          <div class="check"></div>
+          Tidur sebelum pukul 23.00
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: KELUARGA ════════════ -->
+<div class="screen" id="s-keluarga">
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <span>🔋 ●●●●</span>
+  </div>
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Keluarga</div>
+      <div class="topbar-sub">Pantau perubahan kecil pada orang tersayang</div>
+    </div>
+  </div>
+  <div class="scroll-area fade-in">
+
+    <div class="member-scroll">
+      <div class="member-chip active">
+        <div class="member-avatar">👨‍🦳</div>
+        <div class="member-name">Ayah</div>
+      </div>
+      <div class="member-chip">
+        <div class="member-avatar">👩‍🦳</div>
+        <div class="member-name">Ibu</div>
+      </div>
+      <div class="member-chip">
+        <div class="member-avatar">🧓</div>
+        <div class="member-name">Kakek</div>
+      </div>
+      <div class="member-chip add-member">
+        <div class="member-avatar">＋</div>
+        <div class="member-name">Tambah</div>
+      </div>
+    </div>
+
+    <div class="section-label">Radar Ortu — Ayah</div>
+    <div class="card radar-card">
+      <div class="radar-header">
+        <div>
+          <div class="radar-who">Bapak Sutarno, 62</div>
+          <div class="radar-since">Dipantau sejak 14 Jun 2025</div>
+        </div>
+        <div class="signal-badge sig-watch">Perlu dipantau</div>
+      </div>
+      <div class="signal-list">
+        <div class="signal-item">
+          <div class="sig-icon">😮‍💨</div>
+          <div>
+            <div class="sig-text">Cepat lelah saat naik tangga</div>
+            <div class="sig-date">3 hari lalu · Berulang</div>
+          </div>
+          <div class="sig-dot dot-warn"></div>
+        </div>
+        <div class="signal-item">
+          <div class="sig-icon">✋</div>
+          <div>
+            <div class="sig-text">Sering memegang dada kiri</div>
+            <div class="sig-date">1 minggu lalu</div>
+          </div>
+          <div class="sig-dot dot-warn"></div>
+        </div>
+        <div class="signal-item">
+          <div class="sig-icon">😴</div>
+          <div>
+            <div class="sig-text">Tidur lebih lama dari biasanya</div>
+            <div class="sig-date">2 minggu lalu</div>
+          </div>
+          <div class="sig-dot dot-ok"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:16px 18px; margin-bottom:10px; background:var(--warn-soft); border-color:rgba(255,140,66,0.2);">
+      <div style="font-size:12px;font-weight:700;color:var(--warn);margin-bottom:8px;">⚠️ Perhatian Edukatif</div>
+      <div style="font-size:13.5px;color:rgba(255,200,150,0.9);line-height:1.6;">
+        Kombinasi mudah lelah dan sering memegang dada <strong>perlu dipantau lebih cermat</strong>. Ini bukan diagnosis, namun mungkin berkaitan dengan kondisi yang perlu dievaluasi. Pertimbangkan untuk mendiskusikan dengan dokter.
+      </div>
+    </div>
+
+    <div class="section-label">Warisan Sehat</div>
+    <div class="card" style="padding:20px; cursor:pointer;">
+      <div style="font-size:16px;font-weight:800;margin-bottom:6px;">🧬 Peta Risiko Keluarga</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:16px;">Catat riwayat kesehatan keluarga untuk memahami potensi risiko yang perlu diwaspadai.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="body-tag active">❤️ Jantung</div>
+        <div class="body-tag active">🩸 Diabetes</div>
+        <div class="body-tag">🧠 Stroke</div>
+        <div class="body-tag">+ Tambah</div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text3);font-style:italic;">Riwayat keluarga bukan vonis — ini sinyal untuk lebih waspada dan disiplin mencegah.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ SCREEN: PROFIL ════════════ -->
+<div class="screen" id="s-profil">
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <span>🔋 ●●●●</span>
+  </div>
+  <div class="scroll-area fade-in" style="padding-top:12px">
+
+    <div class="card profile-hero">
+      <div class="profile-avatar-lg">R</div>
+      <div class="profile-name">Rafi Pratama</div>
+      <div class="profile-email">rafi.pratama@email.com</div>
+      <div class="profile-badges">
+        <div class="p-badge">🔥 12 Hari Streak</div>
+        <div class="p-badge">✅ 5 Cek Selesai</div>
+        <div class="p-badge">👨‍👩‍👧 3 Anggota</div>
+      </div>
+    </div>
+
+    <div class="section-label">Pengaturan Akun</div>
+    <div class="card setting-group">
+      <div class="setting-item">
+        <div class="setting-icon">👤</div>
+        <div class="setting-text">
+          <div class="setting-name">Data Profil</div>
+          <div class="setting-sub">Usia, jenis kelamin, tujuan kesehatan</div>
+        </div>
+        <div class="setting-arrow">›</div>
+      </div>
+      <div class="setting-item">
+        <div class="setting-icon">🔔</div>
+        <div class="setting-text">
+          <div class="setting-name">Notifikasi</div>
+          <div class="setting-sub">Pengingat harian aktif</div>
+        </div>
+        <div class="toggle" onclick="this.classList.toggle('off')"></div>
+      </div>
+      <div class="setting-item">
+        <div class="setting-icon">🔒</div>
+        <div class="setting-text">
+          <div class="setting-name">Privasi & Data</div>
+          <div class="setting-sub">Kelola data dan kerahasiaan</div>
+        </div>
+        <div class="setting-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="section-label">Aplikasi</div>
+    <div class="card setting-group">
+      <div class="setting-item">
+        <div class="setting-icon">❓</div>
+        <div class="setting-text">
+          <div class="setting-name">Pusat Bantuan</div>
+        </div>
+        <div class="setting-arrow">›</div>
+      </div>
+      <div class="setting-item">
+        <div class="setting-icon">⭐</div>
+        <div class="setting-text">
+          <div class="setting-name">Beri Rating Aplikasi</div>
+        </div>
+        <div class="setting-arrow">›</div>
+      </div>
+      <div class="setting-item">
+        <div class="setting-icon">ℹ️</div>
+        <div class="setting-text">
+          <div class="setting-name">Versi Aplikasi</div>
+          <div class="setting-sub">CegahGejala 1.0.0 — MVP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card disclaimer-card">
+      ⚕️ <strong style="color:rgba(255,200,150,1)">Disclaimer Medis:</strong> CegahGejala bukan aplikasi diagnosis dan bukan pengganti dokter. Semua informasi bersifat edukatif. Bila ada tanda bahaya, segera cari bantuan medis.
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ BOTTOM NAV ════════════ -->
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="navTo('beranda')" id="nav-beranda">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Beranda</div>
+  </div>
+  <div class="nav-item" onclick="navTo('cek')" id="nav-cek">
+    <div class="nav-icon">🔍</div>
+    <div class="nav-label">Cek</div>
+  </div>
+  <div class="nav-item" onclick="navTo('pantau')" id="nav-pantau">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Pantau</div>
+  </div>
+  <div class="nav-item" onclick="navTo('keluarga')" id="nav-keluarga">
+    <div class="nav-icon">👨‍👩‍👧</div>
+    <div class="nav-label">Keluarga</div>
+  </div>
+  <div class="nav-item" onclick="navTo('profil')" id="nav-profil">
+    <div class="nav-icon">👤</div>
+    <div class="nav-label">Profil</div>
+  </div>
+</nav>
+
+<!-- ════════════ MODALS ════════════ -->
+
+<!-- Modal: Cegah Dulu -->
+<div class="modal-overlay" id="modal-cegah">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🛡️ Cegah Dulu</div>
+    <div class="modal-sub">Jawab beberapa pertanyaan tentang kebiasaan harianmu. Hasilnya bersifat edukatif, bukan diagnosis.</div>
+
+    <div class="q-step">
+      <div class="q-label">Seberapa sering kamu makan tidak teratur?</div>
+      <div class="q-options">
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>Hampir setiap hari</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>Beberapa kali seminggu</div>
+        <div class="q-opt selected" onclick="selectOpt(this)"><div class="opt-radio"></div>Sesekali saja</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>Sangat jarang</div>
+      </div>
+    </div>
+
+    <div class="q-step">
+      <div class="q-label">Apakah kamu sering rebahan atau langsung tidur setelah makan?</div>
+      <div class="q-options">
+        <div class="q-opt selected" onclick="selectOpt(this)"><div class="opt-radio"></div>Ya, hampir selalu</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>Kadang-kadang</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>Jarang sekali</div>
+      </div>
+    </div>
+
+    <div class="result-box">
+      <div class="result-title">📊 Pemetaan Risiko Awal</div>
+      <div class="result-row">
+        <div class="r-icon">⚡</div>
+        <div class="r-text"><strong>Area yang perlu diperhatikan:</strong> Lambung dan sistem pencernaan mungkin berkaitan dengan pola makan tidak teratur.</div>
+      </div>
+      <div class="result-row">
+        <div class="r-icon">✅</div>
+        <div class="r-text"><strong>Langkah pencegahan:</strong> Coba beri jeda 30 menit setelah makan sebelum berbaring. Atur jadwal makan 3x sehari.</div>
+      </div>
+      <div class="redflag-box">
+        <div class="redflag-title">🚨 Tanda yang Tidak Boleh Diabaikan</div>
+        <div class="redflag-item"><span>•</span> Nyeri dada yang menjalar ke lengan atau rahang</div>
+        <div class="redflag-item"><span>•</span> Mual berat disertai sesak napas</div>
+        <div class="redflag-item"><span>•</span> Keluhan berlanjut lebih dari 2 minggu</div>
+      </div>
+    </div>
+    <div style="height:12px"></div>
+    <button class="btn-primary" onclick="closeModal('modal-cegah')">Simpan & Lanjut ke Pantau</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- Modal: Gejala Awal -->
+<div class="modal-overlay" id="modal-gejala">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔍 Gejala Awal</div>
+    <div class="modal-sub">Ceritakan keluhan yang sedang kamu rasakan. Ini bukan diagnosis — ini panduan edukatif untuk langkah awal yang aman.</div>
+
+    <div class="q-step">
+      <div class="q-label">Keluhan utama yang kamu rasakan:</div>
+      <div class="q-options">
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>🫁 Dada tidak nyaman / sesak</div>
+        <div class="q-opt selected" onclick="selectOpt(this)"><div class="opt-radio"></div>🔥 Nyeri atau panas di ulu hati</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>🧠 Kepala pusing / berat</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>🦴 Pegal atau nyeri punggung</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>💨 Perut kembung / tidak nyaman</div>
+      </div>
+    </div>
+
+    <div class="q-step">
+      <div class="q-label">Sudah berapa lama keluhan ini muncul?</div>
+      <div class="q-options">
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>Baru hari ini</div>
+        <div class="q-opt selected" onclick="selectOpt(this)"><div class="opt-radio"></div>Beberapa hari</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>Lebih dari seminggu</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>Sudah berulang-ulang</div>
+      </div>
+    </div>
+
+    <div class="result-box">
+      <div class="result-title">📋 Panduan Awal</div>
+      <div class="result-row">
+        <div class="r-icon">💡</div>
+        <div class="r-text"><strong>Kemungkinan pemicu yang sering dikaitkan:</strong> Pola makan tidak teratur, makan terburu-buru, makanan berlemak tinggi, atau stres.</div>
+      </div>
+      <div class="result-row">
+        <div class="r-icon">🏠</div>
+        <div class="r-text"><strong>Langkah awal yang aman:</strong> Makan porsi kecil tapi lebih sering. Hindari berbaring 2 jam setelah makan. Kurangi makanan pedas dan berminyak sementara waktu.</div>
+      </div>
+      <div class="result-row">
+        <div class="r-icon">📌</div>
+        <div class="r-text"><strong>Pantau selama 3–5 hari.</strong> Catat apakah membaik, menetap, atau memburuk.</div>
+      </div>
+      <div class="redflag-box">
+        <div class="redflag-title">🚨 Segera Cari Bantuan Medis Jika</div>
+        <div class="redflag-item"><span>•</span> Nyeri sangat hebat dan mendadak</div>
+        <div class="redflag-item"><span>•</span> Disertai muntah darah atau feses hitam</div>
+        <div class="redflag-item"><span>•</span> Berat badan turun drastis tanpa sebab</div>
+        <div class="redflag-item"><span>•</span> Keluhan tidak membaik setelah 2 minggu</div>
+      </div>
+    </div>
+    <div style="height:12px"></div>
+    <button class="btn-primary" onclick="closeModal('modal-gejala')">Catat di Jurnal Sinyal Tubuh</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- Modal: Cek Hoax -->
+<div class="modal-overlay" id="modal-hoax">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔎 Cek Hoax Kesehatan</div>
+    <div class="modal-sub">Paste pesan forward dari WhatsApp atau media sosial. Sistem akan menganalisis klaim kesehatannya.</div>
+
+    <textarea class="hoax-area" id="hoax-text" placeholder="Contoh: 'Minum air hangat + lemon setiap pagi bisa membunuh sel kanker dan detox ginjal secara alami...'"></textarea>
+    <div style="margin-top:12px">
+      <button class="btn-primary" onclick="analyzeHoax()">Analisis Klaim Ini</button>
+    </div>
+
+    <div id="hoax-result" style="display:none">
+      <div class="verdict-card v-mitos" id="verdict-box">
+        <div class="verdict-label" id="verdict-label">⛔ Mitos</div>
+        <div class="verdict-title" id="verdict-title">Klaim ini tidak didukung bukti ilmiah yang cukup</div>
+        <div class="verdict-text" id="verdict-text">Air lemon hangat memang mengandung vitamin C dan bermanfaat untuk pencernaan ringan. Namun, klaim bahwa minuman ini bisa "membunuh sel kanker" atau "detox ginjal" tidak memiliki dasar ilmiah yang kuat. Ginjal memiliki mekanisme filtrasi alaminya sendiri.</div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--text3);text-align:center;line-height:1.6">
+        Hasil ini bersifat edukatif. Untuk informasi lebih lengkap, konsultasikan dengan tenaga medis profesional.
+      </div>
+    </div>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<!-- Modal: Cek Kerokan -->
+<div class="modal-overlay" id="modal-kerokan">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🌿 Cek Kerokan-mu</div>
+    <div class="modal-sub">Evaluasi tindakan tradisional atau penanganan rumahan sebelum dilakukan.</div>
+
+    <div class="q-step">
+      <div class="q-label">Tindakan yang ingin kamu lakukan:</div>
+      <div class="q-options">
+        <div class="q-opt selected" onclick="selectOpt(this)"><div class="opt-radio"></div>🪄 Kerokan</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>🔥 Kompres panas</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>❄️ Kompres dingin</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>🌿 Jamu / ramuan</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>💆 Pijat</div>
+      </div>
+    </div>
+
+    <div class="result-box">
+      <div class="result-title">📋 Evaluasi: Kerokan</div>
+      <div class="result-row">
+        <div class="r-icon">✅</div>
+        <div class="r-text"><strong>Relatif aman jika:</strong> Pegal biasa akibat kelelahan, kulit sehat tanpa luka, dilakukan tidak terlalu keras.</div>
+      </div>
+      <div class="result-row">
+        <div class="r-icon">⚠️</div>
+        <div class="r-text"><strong>Hati-hati jika:</strong> Ada demam tinggi, kulit sensitif atau sedang berjerawat, sedang mengonsumsi pengencer darah.</div>
+      </div>
+      <div class="redflag-box">
+        <div class="redflag-title" style="color:var(--danger)">⛔ Jangan Kerokan Jika</div>
+        <div class="redflag-item"><span>•</span> Nyeri dada atau sesak (bukan pegal biasa)</div>
+        <div class="redflag-item"><span>•</span> Kulit memar atau ada infeksi</div>
+        <div class="redflag-item"><span>•</span> Sedang hamil (area perut/punggung bawah)</div>
+      </div>
+    </div>
+    <div style="height:12px"></div>
+    <button class="btn-primary" onclick="closeModal('modal-kerokan')">Mengerti</button>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<!-- Modal: Kalau Diabaikan -->
+<div class="modal-overlay" id="modal-diabaikan">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚠️ Kalau Diabaikan</div>
+    <div class="modal-sub">Simulasi edukatif — bukan prediksi medis. Tujuannya membantu kamu memahami hubungan antara kebiasaan dan risiko jangka panjang.</div>
+
+    <div class="q-step">
+      <div class="q-label">Kebiasaan atau gejala yang sering kamu abaikan:</div>
+      <div class="q-options">
+        <div class="q-opt selected" onclick="selectOpt(this)"><div class="opt-radio"></div>🔥 Panas ulu hati yang terus berulang</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>😴 Begadang hampir setiap hari</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>🪑 Duduk tanpa gerak lebih dari 6 jam</div>
+        <div class="q-opt" onclick="selectOpt(this)"><div class="opt-radio"></div>🍜 Makan mie + nasi + larut malam rutin</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:14px;">📅 Proyeksi jika dibiarkan</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card" style="padding:14px 16px;border-left:3px solid var(--accent);border-radius:12px">
+          <div style="font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.05em">3 Bulan</div>
+          <div style="font-size:14px;margin-top:4px;line-height:1.5">Keluhan makin sering muncul, terutama setelah makan besar atau stres ringan. Pola tidur mungkin mulai terganggu.</div>
+        </div>
+        <div class="card" style="padding:14px 16px;border-left:3px solid var(--warn);border-radius:12px">
+          <div style="font-size:11px;color:var(--warn);font-weight:700;text-transform:uppercase;letter-spacing:0.05em">1 Tahun</div>
+          <div style="font-size:14px;margin-top:4px;line-height:1.5">Risiko iritasi lambung kronis meningkat. Aktivitas sehari-hari bisa terganggu karena ketidaknyamanan berulang.</div>
+        </div>
+        <div class="card" style="padding:14px 16px;border-left:3px solid var(--danger);border-radius:12px">
+          <div style="font-size:11px;color:var(--danger);font-weight:700;text-transform:uppercase;letter-spacing:0.05em">3-5 Tahun</div>
+          <div style="font-size:14px;margin-top:4px;line-height:1.5">Kondisi yang tidak ditangani bisa memburuk secara signifikan dan mungkin memerlukan intervensi medis lebih serius.</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text3);font-style:italic;line-height:1.6">
+        Proyeksi ini bukan diagnosis. Setiap orang berbeda. Tujuan simulasi ini adalah mendorongmu untuk mulai mencegah lebih cepat.
+      </div>
+    </div>
+    <div style="height:12px"></div>
+    <button class="btn-primary" onclick="closeModal('modal-diabaikan')">Mulai Prevention Plan</button>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<script>
+// ── NAVIGATION ──
+function navTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-' + screen).classList.add('active');
+  document.getElementById('nav-' + screen).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── MODALS ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) closeModal(this.id);
+  });
+});
+
+// ── SELECT OPTIONS ──
+function selectOpt(el) {
+  const group = el.closest('.q-options');
+  group.querySelectorAll('.q-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── INTENSITY ──
+function setIntensity(n) {
+  const dots = document.querySelectorAll('#int-row .int-dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('filled', i < n);
+  });
+  const labels = ['', 'Sangat Ringan', 'Ringan', 'Sedang', 'Berat', 'Sangat Berat'];
+  const colors = ['', 'var(--accent)', 'var(--accent)', 'var(--warn)', 'var(--danger)', 'var(--danger)'];
+  const lbl = document.querySelector('.int-label span:last-child');
+  if(lbl) { lbl.textContent = labels[n]; lbl.style.color = colors[n]; }
+}
+
+// ── HOAX CHECKER ──
+function analyzeHoax() {
+  const text = document.getElementById('hoax-text').value.trim();
+  if (!text) return;
+
+  const result = document.getElementById('hoax-result');
+  result.style.display = 'none';
+
+  // Simulate analysis
+  setTimeout(() => {
+    result.style.display = 'block';
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 800);
+}
+
+// Body tag toggle feedback
+document.querySelectorAll('.body-tag').forEach(tag => {
+  tag.addEventListener('click', function() {
+    this.classList.toggle('active');
+  });
+});
+
+// Plan step toggle
+document.querySelectorAll('.plan-step').forEach(step => {
+  step.addEventListener('click', function() {
+    this.classList.toggle('done');
+    const check = this.querySelector('.check');
+    if(this.classList.contains('done')) check.textContent = '✓';
+    else check.textContent = '';
+  });
+});
+
+// Nav item hover chip active
+document.querySelectorAll('.chips-row .chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    document.querySelectorAll('.chips-row .chip').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Member chip active
+document.querySelectorAll('.member-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    document.querySelectorAll('.member-chip').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Animate bars on pantau visible
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) {
+      entry.target.querySelectorAll('.bar').forEach((bar, i) => {
+        setTimeout(() => { bar.style.opacity = '1'; }, i * 60);
+      });
+    }
+  });
+});
+document.querySelectorAll('.mini-chart').forEach(c => observer.observe(c));
+</script>
+</body>
+</html>
