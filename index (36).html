@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CegahGejala — Kenali tanda. Sadari risiko. Lakukan pencegahan.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #F0F4F8;
+  --bg2:         #E8EFF5;
+  --surface:     #FFFFFF;
+  --surface2:    #F7FAFC;
+  --primary:     #1A7F6E;
+  --primary2:    #145F53;
+  --primary-glow:rgba(26,127,110,0.18);
+  --primary-soft:rgba(26,127,110,0.10);
+  --primary-pale:rgba(26,127,110,0.06);
+  --teal:        #0E9B89;
+  --blue:        #1E6FA8;
+  --blue-soft:   rgba(30,111,168,0.10);
+  --sky:         #E8F4FD;
+  --warn:        #D97706;
+  --warn-soft:   rgba(217,119,6,0.10);
+  --warn-pale:   rgba(217,119,6,0.06);
+  --danger:      #DC2626;
+  --danger-soft: rgba(220,38,38,0.10);
+  --danger-pale: rgba(220,38,38,0.06);
+  --purple:      #7C3AED;
+  --purple-soft: rgba(124,58,237,0.10);
+  --text:        #1A2332;
+  --text2:       #4A5568;
+  --text3:       #A0AEC0;
+  --text4:       #CBD5E0;
+  --border:      rgba(0,0,0,0.08);
+  --border2:     rgba(0,0,0,0.05);
+  --shadow:      0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-md:   0 4px 12px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.06);
+  --shadow-lg:   0 8px 24px rgba(0,0,0,0.12), 0 16px 48px rgba(0,0,0,0.08);
+  --radius:      16px;
+  --radius-sm:   12px;
+  --radius-xs:   8px;
+  --nav-h:       72px;
+  --max-w:       480px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: block; }
+.app-body { padding-bottom: calc(var(--nav-h) + 20px); }
+
+.scroll-area { padding: 0 16px 24px; max-width: var(--max-w); margin: 0 auto; }
+
+.auth-wrap {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0F4C3A 0%, #1A7F6E 40%, #0E9B89 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 24px;
+  position: relative; overflow: hidden;
+}
+.auth-wrap::before {
+  content:'';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 0%, rgba(255,255,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 90% 100%, rgba(0,0,0,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.auth-logo { text-align: center; margin-bottom: 36px; position: relative; }
+.auth-logo-icon {
+  width: 72px; height: 72px; border-radius: 22px;
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px; margin: 0 auto 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+.auth-logo-text { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+.auth-logo-text span { color: rgba(167,243,208,0.9); }
+.auth-tagline { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 6px; letter-spacing: 0.02em; }
+
+.auth-card {
+  width: 100%; max-width: 400px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+.auth-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.auth-sub { font-size: 13.5px; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
+
+.field { margin-bottom: 16px; }
+.field label { font-size: 12px; font-weight: 700; color: var(--text2); display: block; margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+.field input {
+  width: 100%; padding: 13px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15px; font-family: inherit;
+  color: var(--text); background: var(--surface2);
+  outline: none; transition: all 0.2s;
+}
+.field input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px var(--primary-soft); }
+.field input::placeholder { color: var(--text3); }
+
+.btn-main {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--primary), var(--teal));
+  border: none; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 700; font-family: inherit;
+  color: #fff; cursor: pointer;
+  box-shadow: 0 4px 16px var(--primary-glow);
+  transition: all 0.2s; margin-top: 4px;
+  letter-spacing: -0.1px;
+}
+.btn-main:active { transform: scale(0.98); opacity: 0.9; }
+.btn-main:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.auth-switch { text-align: center; margin-top: 20px; font-size: 13.5px; color: var(--text2); }
+.auth-switch a { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: none; }
+
+.auth-error {
+  background: var(--danger-soft); border: 1px solid rgba(220,38,38,0.2);
+  border-radius: var(--radius-xs); padding: 10px 14px;
+  font-size: 13px; color: var(--danger); margin-bottom: 16px;
+  display: none;
+}
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border2);
+  padding: 16px 20px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+  max-width: 100%;
+}
+.topbar-logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--teal));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  box-shadow: 0 3px 10px var(--primary-glow);
+}
+.logo-name { font-size: 18px; font-weight: 900; letter-spacing: -0.4px; color: var(--text); }
+.logo-name span { color: var(--primary); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.avatar-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: #fff; cursor: pointer;
+  box-shadow: 0 2px 8px var(--primary-glow);
+}
+.page-header { padding: 20px 20px 0; max-width: var(--max-w); margin: 0 auto; }
+.page-title { font-size: 26px; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
+.page-sub { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card-tap:active { transform: scale(0.985); box-shadow: var(--shadow-md); }
+
+.hero-card {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--teal) 60%, #0ABBA8 100%);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+  position: relative; overflow: hidden;
+  border: none;
+  box-shadow: 0 6px 24px var(--primary-glow), 0 2px 8px rgba(0,0,0,0.08);
+}
+.hero-card::before {
+  content:'';
+  position: absolute; top: -60px; right: -60px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-card::after {
+  content:'';
+  position: absolute; bottom: -30px; left: -30px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-greeting { font-size: 12.5px; color: rgba(255,255,255,0.75); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; position: relative; z-index: 1; }
+.hero-title { font-size: 22px; font-weight: 900; color: #fff; line-height: 1.25; margin-bottom: 8px; letter-spacing: -0.4px; position: relative; z-index: 1; }
+.hero-sub { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.5; position: relative; z-index: 1; }
+
+.section-label {
+  font-size: 11px; font-weight: 800; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin: 20px 0 10px;
+}
+
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.quick-card {
+  padding: 18px 16px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.qc-icon {
+  width: 44px; height: 44px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.qc-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.2; }
+.qc-desc { font-size: 11.5px; color: var(--text2); line-height: 1.4; }
+
+.qc-green .qc-icon { background: var(--primary-pale); }
+.qc-orange .qc-icon { background: var(--warn-pale); }
+.qc-blue .qc-icon { background: var(--blue-soft); }
+.qc-purple .qc-icon { background: var(--purple-soft); }
+
+.reminder-card {
+  padding: 15px 18px;
+  display: flex; align-items: center; gap: 14px; cursor: pointer;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--primary);
+}
+.reminder-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); flex-shrink: 0; animation: pulse-dot 2s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 3px var(--primary-soft);} 50%{box-shadow:0 0 0 5px rgba(26,127,110,0.05);} }
+.reminder-label { font-size: 11px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.reminder-text { font-size: 14px; font-weight: 600; color: var(--text); margin-top: 2px; }
+.reminder-arr { margin-left: auto; color: var(--text3); font-size: 20px; flex-shrink: 0; }
+
+.edu-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.edu-card { padding: 15px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+.edu-thumb { width: 50px; height: 50px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.edu-cat { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
+.edu-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-top: 3px; line-height: 1.3; }
+.edu-time { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+.cek-list { display: flex; flex-direction: column; gap: 10px; }
+.cek-item {
+  padding: 18px 16px;
+  display: flex; align-items: center; gap: 16px;
+  cursor: pointer; position: relative;
+}
+.cek-arr { position: absolute; right: 16px; color: var(--text3); font-size: 20px; }
+.cek-icon { width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.cek-name { font-size: 15.5px; font-weight: 800; color: var(--text); }
+.cek-desc { font-size: 12.5px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+
+.badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 100px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
+.badge-green { background: var(--primary-soft); color: var(--primary); }
+.badge-warn { background: var(--warn-soft); color: var(--warn); }
+.badge-danger { background: var(--danger-soft); color: var(--danger); }
+.badge-blue { background: var(--blue-soft); color: var(--blue); }
+.badge-purple { background: var(--purple-soft); color: var(--purple); }
+
+.member-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; scrollbar-width: none; }
+.member-scroll::-webkit-scrollbar { display: none; }
+.member-chip { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; cursor: pointer; }
+.member-avatar {
+  width: 58px; height: 58px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+  border: 2.5px solid var(--border); background: var(--surface2);
+  transition: all 0.2s;
+}
+.member-chip.active .member-avatar { border-color: var(--primary); background: var(--primary-pale); box-shadow: 0 0 0 3px var(--primary-soft); }
+.member-name { font-size: 11px; color: var(--text2); font-weight: 600; }
+.add-chip .member-avatar { border-style: dashed; font-size: 20px; color: var(--text3); }
+
+.radar-card { padding: 20px; margin-bottom: 12px; }
+.radar-hdr { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.radar-who { font-size: 17px; font-weight: 800; color: var(--text); }
+.radar-since { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.signal-list { display: flex; flex-direction: column; gap: 10px; }
+.signal-item { display: flex; align-items: flex-start; gap: 12px; }
+.sig-icon { font-size: 18px; margin-top: 1px; width: 28px; text-align: center; flex-shrink: 0; }
+.sig-body { flex: 1; }
+.sig-text { font-size: 13.5px; font-weight: 600; color: var(--text); }
+.sig-date { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.sig-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.dot-warn { background: var(--warn); }
+.dot-ok { background: var(--primary); }
+
+.profile-hero { padding: 28px 20px; text-align: center; margin-bottom: 16px; }
+.profile-av {
+  width: 82px; height: 82px; border-radius: 50%; margin: 0 auto 14px;
+  background: linear-gradient(135deg, var(--primary), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; font-weight: 800; color: #fff;
+  box-shadow: 0 6px 20px var(--primary-glow);
+}
+.profile-name { font-size: 22px; font-weight: 900; color: var(--text); }
+.profile-email { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.profile-badges { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+
+.setting-group { margin-bottom: 16px; overflow: hidden; }
+.setting-item { padding: 15px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; border-bottom: 1px solid var(--border2); }
+.setting-item:last-child { border-bottom: none; }
+.setting-icon { font-size: 20px; width: 32px; text-align: center; flex-shrink: 0; }
+.setting-text { flex: 1; }
+.setting-name { font-size: 14.5px; font-weight: 600; color: var(--text); }
+.setting-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.setting-arr { color: var(--text3); font-size: 18px; }
+
+.toggle { width: 44px; height: 26px; border-radius: 13px; background: var(--primary); position: relative; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+.toggle::after { content:''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: all 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.toggle.off { background: var(--text4); }
+.toggle.off::after { left: 21px; }
+
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 8px 4px;
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 14px; border-radius: 14px; cursor: pointer;
+  transition: all 0.2s; flex: 1; min-width: 0;
+}
+.nav-item:active { transform: scale(0.9); }
+.nav-icon { font-size: 22px; line-height: 1; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--text3); white-space: nowrap; transition: color 0.2s; }
+.nav-item.active .nav-label { color: var(--primary); }
+.nav-item.active { background: var(--primary-pale); }
+
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(10,20,30,0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  align-items: flex-end;
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+  padding: 0 20px 40px;
+  width: 100%; max-height: 90vh;
+  overflow-y: auto;
+  animation: slide-up 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
+}
+@keyframes slide-up { from { transform: translateY(100%); opacity: 0.5; } to { transform: translateY(0); opacity: 1; } }
+.modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--text4); margin: 12px auto 20px; }
+.modal-title { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 6px; letter-spacing: -0.4px; }
+.modal-sub { font-size: 13.5px; color: var(--text2); line-height: 1.6; margin-bottom: 22px; }
+
+.q-label { font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 8px; }
+.q-step { margin-bottom: 20px; }
+textarea.q-input, input.q-input {
+  width: 100%; background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  font-size: 14px; font-family: inherit; color: var(--text);
+  outline: none; transition: all 0.2s; resize: none; line-height: 1.6;
+}
+textarea.q-input:focus, input.q-input:focus {
+  border-color: var(--primary); background: #fff;
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+textarea.q-input::placeholder, input.q-input::placeholder { color: var(--text3); }
+textarea.q-input { min-height: 100px; }
+
+.q-options { display: flex; flex-direction: column; gap: 8px; }
+.q-opt {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 13px 16px;
+  font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer;
+  display: flex; align-items: center; gap: 10px; transition: all 0.15s;
+}
+.q-opt:active { background: var(--primary-pale); }
+.q-opt.selected { background: var(--primary-pale); border-color: var(--primary); color: var(--primary); font-weight: 700; }
+.opt-radio {
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all 0.15s;
+}
+.q-opt.selected .opt-radio { background: var(--primary); border-color: var(--primary); color: #fff; font-size: 10px; font-weight: 900; }
+.q-opt.selected .opt-radio::after { content: '✓'; }
+
+.result-box {
+  background: linear-gradient(135deg, rgba(26,127,110,0.06), rgba(14,155,137,0.04));
+  border: 1.5px solid rgba(26,127,110,0.2);
+  border-radius: var(--radius); padding: 20px; margin-top: 20px;
+}
+.result-title { font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 14px; }
+.result-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+.r-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.r-text { font-size: 13.5px; color: var(--text2); line-height: 1.6; }
+.r-text strong { color: var(--text); font-weight: 700; }
+
+.redflag-box {
+  background: var(--danger-pale); border: 1.5px solid rgba(220,38,38,0.15);
+  border-radius: var(--radius-sm); padding: 16px; margin-top: 12px;
+}
+.redflag-title { font-size: 12.5px; font-weight: 800; color: var(--danger); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+.redflag-item { font-size: 13px; color: #7F1D1D; margin-bottom: 6px; display: flex; gap: 8px; line-height: 1.5; }
+
+.caution-box {
+  background: var(--warn-pale); border: 1.5px solid rgba(217,119,6,0.15);
+  border-radius: var(--radius-sm); padding: 16px; margin-top: 10px;
+}
+.caution-title { font-size: 12.5px; font-weight: 800; color: var(--warn); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+.caution-item { font-size: 13px; color: #78350F; margin-bottom: 6px; display: flex; gap: 8px; line-height: 1.5; }
+
+.ai-loading {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px; background: var(--primary-pale);
+  border-radius: var(--radius-sm); margin-top: 16px;
+  border: 1px solid rgba(26,127,110,0.15);
+}
+.ai-dots { display: flex; gap: 5px; }
+.ai-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--primary); opacity: 0.4;
+  animation: ai-blink 1.2s ease-in-out infinite;
+}
+.ai-dot:nth-child(2) { animation-delay: 0.2s; }
+.ai-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes ai-blink { 0%,100%{opacity:0.3; transform:scale(0.8);} 50%{opacity:1; transform:scale(1.2);} }
+.ai-loading-text { font-size: 13px; color: var(--primary); font-weight: 600; }
+
+.verdict-card { border-radius: var(--radius); padding: 18px; margin-top: 16px; }
+.v-mitos { background: var(--danger-pale); border: 1.5px solid rgba(220,38,38,0.2); }
+.v-konteks { background: var(--warn-pale); border: 1.5px solid rgba(217,119,6,0.2); }
+.v-valid { background: var(--primary-pale); border: 1.5px solid rgba(26,127,110,0.2); }
+.verdict-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.v-mitos .verdict-label { color: var(--danger); }
+.v-konteks .verdict-label { color: var(--warn); }
+.v-valid .verdict-label { color: var(--primary); }
+.verdict-title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.verdict-text { font-size: 13.5px; color: var(--text2); line-height: 1.7; }
+
+.penyakit-tags { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 16px; }
+.penyakit-tag {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 100px; padding: 6px 14px;
+  font-size: 12.5px; font-weight: 600; color: var(--text2); cursor: pointer;
+  transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+}
+.penyakit-tag.active { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+.penyakit-tag .tag-x { font-size: 14px; line-height: 1; }
+
+.ai-response {
+  font-size: 13.5px; color: var(--text2); line-height: 1.8;
+}
+.ai-response p { margin-bottom: 6px; }
+.ai-response p:last-child { margin-bottom: 0; }
+.ai-response strong { color: var(--text); font-weight: 700; }
+.ai-response br + • { display: block; margin-top: 4px; }
+
+.profile-section { margin-bottom: 24px; }
+.profile-section-title { font-size: 12px; font-weight: 800; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+
+.disclaimer {
+  background: rgba(30,111,168,0.06); border: 1px solid rgba(30,111,168,0.15);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  font-size: 12.5px; color: var(--text2); line-height: 1.6; margin-bottom: 16px;
+}
+
+.btn-outline {
+  width: 100%; padding: 14px;
+  background: transparent;
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-sm);
+  font-size: 14.5px; font-weight: 700; font-family: inherit;
+  color: var(--primary); cursor: pointer; transition: all 0.2s;
+  margin-top: 10px;
+}
+.btn-outline:active { background: var(--primary-pale); }
+.btn-danger {
+  width: 100%; padding: 14px;
+  background: var(--danger-pale);
+  border: 1.5px solid rgba(220,38,38,0.25);
+  border-radius: var(--radius-sm);
+  font-size: 14.5px; font-weight: 700; font-family: inherit;
+  color: var(--danger); cursor: pointer; transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.gap { height: 12px; }
+.fade-in { animation: fade-in 0.35s ease both; }
+@keyframes fade-in { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--text4); border-radius: 2px; }
+
+@media (max-width: 400px) {
+  .hero-title { font-size: 20px; }
+  .quick-grid { gap: 8px; }
+  .quick-card { padding: 14px 12px; }
+}
+
+/* FASE 2 */
+.jurnal-entry { padding:14px 16px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border2);margin-bottom:10px;box-shadow:var(--shadow); }
+.jurnal-entry-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:8px; }
+.jurnal-entry-date { font-size:11px;color:var(--text3);font-weight:600; }
+.jurnal-entry-del { font-size:14px;color:var(--text3);cursor:pointer;padding:2px 6px; }
+.jurnal-entry-gejala { font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px; }
+.jurnal-entry-detail { font-size:12.5px;color:var(--text2);line-height:1.5; }
+.jurnal-empty { text-align:center;padding:32px 16px;color:var(--text3);font-size:14px; }
+.intensitas-bar { display:flex;gap:4px;margin-top:8px; }
+.int-dot { flex:1;height:8px;border-radius:4px;background:var(--border);cursor:pointer;transition:all 0.15s; }
+.int-dot.active-1,.int-dot.active-2,.int-dot.active-3 { background:#22C55E; }
+.int-dot.active-4,.int-dot.active-5,.int-dot.active-6 { background:var(--warn); }
+.int-dot.active-7,.int-dot.active-8 { background:#F97316; }
+.int-dot.active-9,.int-dot.active-10 { background:var(--danger); }
+.int-label { font-size:12px;color:var(--text3);margin-top:4px;text-align:center; }
+.plan-day { background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden; }
+.plan-day-header { padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer; }
+.plan-day-num { width:36px;height:36px;border-radius:10px;background:var(--primary-pale);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--primary);flex-shrink:0; }
+.plan-day-title { font-size:14px;font-weight:700;color:var(--text);flex:1; }
+.plan-day-status { font-size:18px; }
+.plan-day-body { padding:0 16px 14px;display:none; }
+.plan-day-body.open { display:block; }
+.plan-task { display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border2); }
+.plan-task:last-child { border-bottom:none; }
+.plan-task-check { width:20px;height:20px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all 0.15s; }
+.plan-task-check.done { background:var(--primary);border-color:var(--primary);color:#fff;font-size:11px; }
+.plan-task-text { font-size:13.5px;color:var(--text2);line-height:1.5; }
+.plan-task-text.done { text-decoration:line-through;color:var(--text3); }
+.plan-progress { height:6px;background:var(--border);border-radius:3px;margin:12px 0 4px;overflow:hidden; }
+.plan-progress-bar { height:100%;background:linear-gradient(90deg,var(--primary),var(--teal));border-radius:3px;transition:width 0.4s; }
+.tree-node { background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;transition:all 0.15s;text-align:center;min-width:80px; }
+.tree-node:active { transform:scale(0.96); }
+.tree-node.has-data { border-color:var(--warn);background:var(--warn-pale); }
+.tree-node.has-data .tree-node-name { color:var(--warn); }
+.tree-node-emoji { font-size:22px;margin-bottom:4px; }
+.tree-node-name { font-size:11px;font-weight:700;color:var(--text2); }
+.tree-row { display:flex;justify-content:center;gap:10px;margin:8px 0; }
+.risk-chip { display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:100px;font-size:12.5px;font-weight:600;margin:4px;cursor:default; }
+.risk-low { background:var(--primary-pale);color:var(--primary);border:1px solid rgba(26,127,110,0.2); }
+.risk-med { background:var(--warn-pale);color:var(--warn);border:1px solid rgba(217,119,6,0.2); }
+.risk-high { background:var(--danger-pale);color:var(--danger);border:1px solid rgba(220,38,38,0.2); }
+.pantau-tabs { display:flex;gap:0;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:16px; }
+.pantau-tab { flex:1;padding:9px 8px;text-align:center;font-size:12.5px;font-weight:600;color:var(--text3);cursor:pointer;border-radius:10px;transition:all 0.2s; }
+.pantau-tab.active { background:var(--surface);color:var(--primary);font-weight:700;box-shadow:var(--shadow); }
+.pantau-panel { display:none; }
+.pantau-panel.active { display:block; }
+.stat-row { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px; }
+.stat-card { background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow); }
+.stat-val { font-size:28px;font-weight:900;color:var(--primary); }
+.stat-label { font-size:11.5px;color:var(--text2);margin-top:2px; }
+</style>
+</head>
+<body>
+
+<!-- AUTH: LOGIN -->
+<div class="screen active" id="s-login">
+  <div class="auth-wrap">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🌿</div>
+      <div class="auth-logo-text">Cegah<span>Gejala</span></div>
+      <div class="auth-tagline">Kenali tanda. Sadari risiko. Lakukan pencegahan.</div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-title">Masuk</div>
+      <div class="auth-sub">Selamat datang kembali. Yuk jaga kesehatan hari ini.</div>
+      <div class="auth-error" id="login-error"></div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="nama@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-main" id="btn-login" onclick="doLogin()">Masuk</button>
+      <div class="auth-switch">Belum punya akun? <a onclick="showScreen('s-register')">Daftar gratis</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH: REGISTER -->
+<div class="screen" id="s-register">
+  <div class="auth-wrap">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🌿</div>
+      <div class="auth-logo-text">Cegah<span>Gejala</span></div>
+      <div class="auth-tagline">Gratis selamanya. Tanpa kartu kredit.</div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-title">Buat Akun</div>
+      <div class="auth-sub">Daftar gratis, mulai kenali sinyal tubuhmu hari ini.</div>
+      <div class="auth-error" id="reg-error"></div>
+      <div class="field">
+        <label>Nama Lengkap</label>
+        <input type="text" id="reg-name" placeholder="Nama kamu" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="nama@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Min. 6 karakter" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label>Konfirmasi Password</label>
+        <input type="password" id="reg-password2" placeholder="Ulangi password" autocomplete="new-password">
+      </div>
+      <button class="btn-main" id="btn-register" onclick="doRegister()">Buat Akun Gratis</button>
+      <div class="auth-switch">Sudah punya akun? <a onclick="showScreen('s-login')">Masuk</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" style="display:none">
+
+<!-- SCREEN: BERANDA -->
+<div class="screen active app-body" id="s-beranda">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">🌿</div>
+      <div class="logo-name">Cegah<span>Gejala</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="avatar-btn" id="av-btn" onclick="navTo('profil')">R</div>
+    </div>
+  </div>
+  <div class="scroll-area fade-in">
+    <div style="height:16px"></div>
+    <div class="hero-card">
+      <div class="hero-greeting" id="hero-greeting">Selamat pagi 👋</div>
+      <div class="hero-title">Yuk cek sinyal<br>tubuhmu hari ini</div>
+      <div class="hero-sub">Kenali tanda kecil sebelum jadi masalah besar.</div>
+    </div>
+
+    <div class="section-label">Fitur Utama</div>
+    <div class="quick-grid">
+      <div class="card quick-card qc-green card-tap" onclick="navTo('cek'); setTimeout(()=>openModal('modal-cegah'),120)">
+        <div class="qc-icon">🛡️</div>
+        <div>
+          <div class="qc-title">Cegah Dulu</div>
+          <div class="qc-desc">Peta risiko dari kebiasaan harianmu</div>
+        </div>
+      </div>
+      <div class="card quick-card qc-orange card-tap" onclick="navTo('cek'); setTimeout(()=>openModal('modal-gejala'),120)">
+        <div class="qc-icon">🔍</div>
+        <div>
+          <div class="qc-title">Gejala Awal</div>
+          <div class="qc-desc">Pahami keluhan yang mulai terasa</div>
+        </div>
+      </div>
+      <div class="card quick-card qc-blue card-tap" onclick="navTo('cek'); setTimeout(()=>openModal('modal-hoax'),120)">
+        <div class="qc-icon">🔎</div>
+        <div>
+          <div class="qc-title">Cek Hoax</div>
+          <div class="qc-desc">Verifikasi info kesehatan di WA</div>
+        </div>
+      </div>
+      <div class="card quick-card qc-purple card-tap" onclick="navTo('keluarga')">
+        <div class="qc-icon">👨‍👩‍👧</div>
+        <div>
+          <div class="qc-title">Radar Ortu</div>
+          <div class="qc-desc">Pantau kondisi orang tersayang</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card reminder-card card-tap" onclick="navTo('cek'); setTimeout(()=>openModal('modal-cegah'),120)">
+      <div class="reminder-dot"></div>
+      <div>
+        <div class="reminder-label">Pengingat Hari Ini</div>
+        <div class="reminder-text">Belum ada cek kesehatan hari ini</div>
+      </div>
+      <div class="reminder-arr">›</div>
+    </div>
+
+    <div class="section-label">Edukasi Terpilih</div>
+    <div class="edu-row">
+      <div class="card edu-card card-tap">
+        <div class="edu-thumb" style="background:var(--primary-pale)">🫁</div>
+        <div>
+          <div class="edu-cat" style="color:var(--primary)">Gejala Awal</div>
+          <div class="edu-title">Kenapa dada terasa berat setelah makan besar?</div>
+          <div class="edu-time">4 menit baca</div>
+        </div>
+      </div>
+      <div class="card edu-card card-tap">
+        <div class="edu-thumb" style="background:var(--warn-pale)">🧠</div>
+        <div>
+          <div class="edu-cat" style="color:var(--warn)">Pencegahan</div>
+          <div class="edu-title">5 kebiasaan malam yang diam-diam ganggu lambung</div>
+          <div class="edu-time">3 menit baca</div>
+        </div>
+      </div>
+      <div class="card edu-card card-tap">
+        <div class="edu-thumb" style="background:var(--blue-soft)">💊</div>
+        <div>
+          <div class="edu-cat" style="color:var(--blue)">Cek Hoax</div>
+          <div class="edu-title">Benarkah minum air dingin bikin darah kental?</div>
+          <div class="edu-time">2 menit baca</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      ⚕️ <strong>Disclaimer:</strong> CegahGejala bukan aplikasi diagnosis dan bukan pengganti dokter. Semua informasi bersifat edukatif. Bila ada tanda bahaya, segera cari bantuan medis profesional.
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: CEK -->
+<div class="screen app-body" id="s-cek">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">🌿</div>
+      <div class="logo-name">Cegah<span>Gejala</span></div>
+    </div>
+  </div>
+  <div class="page-header"><div class="page-title">Cek</div><div class="page-sub">Periksa, pahami & verifikasi informasi kesehatanmu</div></div>
+  <div class="scroll-area fade-in" style="padding-top:16px">
+    <div class="cek-list">
+      <div class="card cek-item card-tap" onclick="openModal('modal-cegah')">
+        <div class="cek-icon" style="background:var(--primary-pale)">🛡️</div>
+        <div><div class="cek-name">Cegah Dulu</div><div class="cek-desc">Peta risiko dari kebiasaan harianmu sebelum ada gejala</div></div>
+        <div class="cek-arr">›</div>
+      </div>
+      <div class="card cek-item card-tap" onclick="openModal('modal-gejala')">
+        <div class="cek-icon" style="background:var(--warn-pale)">🔍</div>
+        <div><div class="cek-name">Gejala Awal</div><div class="cek-desc">Pahami keluhan yang mulai dirasakan dengan panduan aman</div></div>
+        <div class="cek-arr">›</div>
+      </div>
+      <div class="card cek-item card-tap" onclick="openModal('modal-hoax')">
+        <div class="cek-icon" style="background:var(--blue-soft)">🔎</div>
+        <div><div class="cek-name">Cek Hoax Kesehatan</div><div class="cek-desc">Verifikasi pesan forward WhatsApp & klaim kesehatan</div></div>
+        <div class="cek-arr">›</div>
+      </div>
+      <div class="card cek-item card-tap" onclick="openModal('modal-kerokan')">
+        <div class="cek-icon" style="background:var(--purple-soft)">🌿</div>
+        <div><div class="cek-name">Cek Kerokan-mu</div><div class="cek-desc">Tanya soal pengobatan & terapi tradisional Indonesia</div></div>
+        <div class="cek-arr">›</div>
+      </div>
+      <div class="card cek-item card-tap" onclick="openModal('modal-diabaikan')">
+        <div class="cek-icon" style="background:var(--danger-pale)">⚠️</div>
+        <div><div class="cek-name">Kalau Diabaikan</div><div class="cek-desc">Simulasi risiko jika kebiasaan atau gejala terus diabaikan</div></div>
+        <div class="cek-arr">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: KELUARGA -->
+<div class="screen app-body" id="s-keluarga">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">🌿</div>
+      <div class="logo-name">Cegah<span>Gejala</span></div>
+    </div>
+    <button onclick="openModal('modal-add-member')" style="background:var(--primary);border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;">+ Tambah</button>
+  </div>
+  <div class="page-header"><div class="page-title">Keluarga</div><div class="page-sub">Pantau kondisi anggota keluarga tersayang</div></div>
+  <div class="scroll-area fade-in" style="padding-top:16px">
+    <div class="member-scroll" id="member-scroll">
+      <div class="member-chip active" id="mc-self" onclick="selectMember('self')">
+        <div class="member-avatar" id="av-self">👤</div>
+        <div class="member-name" id="mn-self">Saya</div>
+      </div>
+    </div>
+    <div id="family-content">
+      <div class="card" style="padding:28px;text-align:center;">
+        <div style="font-size:40px;margin-bottom:12px">👨‍👩‍👧</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">Tambahkan Anggota Keluarga</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:18px">Catat kondisi orang tua atau anggota keluarga. AI akan memberi saran edukatif berdasarkan keluhan mereka.</div>
+        <button class="btn-main" style="padding:12px" onclick="openModal('modal-add-member')">Tambah Anggota</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: PANTAU -->
+<div class="screen app-body" id="s-pantau">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">🌿</div>
+      <div class="logo-name">Cegah<span>Gejala</span></div>
+    </div>
+  </div>
+  <div class="page-header">
+    <div class="page-title">Pantau</div>
+    <div class="page-sub">Jurnal, rencana pencegahan & riwayat keluarga</div>
+  </div>
+  <div class="scroll-area fade-in" style="padding-top:16px">
+    <div class="pantau-tabs">
+      <div class="pantau-tab active" onclick="switchPantauTab('jurnal')" id="tab-jurnal">📓 Jurnal</div>
+      <div class="pantau-tab" onclick="switchPantauTab('plan')" id="tab-plan">📅 Plan</div>
+      <div class="pantau-tab" onclick="switchPantauTab('warisan')" id="tab-warisan">🌳 Warisan</div>
+    </div>
+    <div class="pantau-panel active" id="panel-jurnal">
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-val" id="jurnal-count">0</div><div class="stat-label">Catatan bulan ini</div></div>
+        <div class="stat-card"><div class="stat-val" id="jurnal-streak">0</div><div class="stat-label">Hari berturut catat</div></div>
+      </div>
+      <button class="btn-main" onclick="openModal('modal-jurnal-input')" style="margin-bottom:16px">+ Catat Gejala Hari Ini</button>
+      <div class="section-label">Catatan Terbaru</div>
+      <div id="jurnal-list"><div class="jurnal-empty"><div style="font-size:36px;margin-bottom:12px">📓</div><div>Belum ada catatan gejala.</div><div style="font-size:12px;margin-top:6px">Mulai catat hari ini untuk melihat pola.</div></div></div>
+    </div>
+    <div class="pantau-panel" id="panel-plan">
+      <div id="plan-empty-state">
+        <div class="card" style="padding:28px;text-align:center;margin-bottom:16px">
+          <div style="font-size:40px;margin-bottom:12px">📅</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">Buat Prevention Plan</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:18px">AI akan menyusun rencana pencegahan 7 hari yang dipersonalisasi berdasarkan kebiasaan dan kondisi kesehatanmu.</div>
+          <button class="btn-main" style="padding:12px" onclick="openModal('modal-plan-input')">Buat Plan Sekarang</button>
+        </div>
+      </div>
+      <div id="plan-content" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div>
+            <div style="font-size:15px;font-weight:800;color:var(--text)" id="plan-title">Prevention Plan 7 Hari</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px" id="plan-date"></div>
+          </div>
+          <div id="plan-pct" style="font-size:22px;font-weight:900;color:var(--primary)">0%</div>
+        </div>
+        <div id="plan-context" style="display:none;font-size:11.5px;color:var(--primary);background:var(--primary-pale);border-radius:8px;padding:6px 12px;margin-bottom:10px;font-weight:600"></div>
+        <div class="plan-progress" style="margin-bottom:16px"><div class="plan-progress-bar" id="plan-bar" style="width:0%"></div></div>
+        <div id="plan-days-list"></div>
+        <button class="btn-outline" onclick="openModal('modal-plan-input')" style="margin-top:8px">Buat Plan Baru</button>
+      </div>
+    </div>
+    <div class="pantau-panel" id="panel-warisan">
+      <div class="card" style="padding:20px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:16px;text-align:center">🌳 Pohon Keluarga Kesehatan</div>
+        <div style="text-align:center;margin-bottom:4px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:0.06em">GENERASI KAKEK & NENEK</div>
+        <div class="tree-row">
+          <div class="tree-node" id="tn-kakek-ayah" onclick="openWarisanModal('Kakek (dari Ayah)','🧓')"><div class="tree-node-emoji">🧓</div><div class="tree-node-name">Kakek Ayah</div></div>
+          <div class="tree-node" id="tn-nenek-ayah" onclick="openWarisanModal('Nenek (dari Ayah)','👵')"><div class="tree-node-emoji">👵</div><div class="tree-node-name">Nenek Ayah</div></div>
+          <div style="width:20px"></div>
+          <div class="tree-node" id="tn-kakek-ibu" onclick="openWarisanModal('Kakek (dari Ibu)','🧓')"><div class="tree-node-emoji">🧓</div><div class="tree-node-name">Kakek Ibu</div></div>
+          <div class="tree-node" id="tn-nenek-ibu" onclick="openWarisanModal('Nenek (dari Ibu)','👵')"><div class="tree-node-emoji">👵</div><div class="tree-node-name">Nenek Ibu</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-around;padding:0 20px">
+          <div style="width:2px;height:20px;background:var(--border)"></div>
+          <div style="width:2px;height:20px;background:var(--border)"></div>
+        </div>
+        <div style="text-align:center;margin-bottom:4px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:0.06em">ORANG TUA</div>
+        <div class="tree-row">
+          <div class="tree-node" id="tn-ayah" onclick="openWarisanModal('Ayah','👨')"><div class="tree-node-emoji">👨</div><div class="tree-node-name">Ayah</div></div>
+          <div class="tree-node" id="tn-ibu" onclick="openWarisanModal('Ibu','👩')"><div class="tree-node-emoji">👩</div><div class="tree-node-name">Ibu</div></div>
+        </div>
+        <div style="width:2px;height:20px;background:var(--border);margin:0 auto"></div>
+        <div style="text-align:center;margin-bottom:4px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:0.06em">KAMU</div>
+        <div class="tree-row">
+          <div class="tree-node" style="border-color:var(--primary);background:var(--primary-pale);min-width:100px">
+            <div class="tree-node-emoji" id="warisan-self-emoji">👤</div>
+            <div class="tree-node-name" style="color:var(--primary)" id="warisan-self-name">Saya</div>
+          </div>
+        </div>
+      </div>
+      <div id="warisan-no-data" style="text-align:center;padding:20px;color:var(--text3);font-size:13.5px">Ketuk anggota keluarga di atas untuk menambahkan riwayat penyakit mereka.</div>
+      <div id="warisan-result" style="display:none">
+        <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px">🔬 Analisis Risiko Genetikmu</div>
+        <div id="warisan-chips" style="margin-bottom:16px"></div>
+        <div class="card" style="padding:16px"><div class="ai-response" id="warisan-ai-text"></div></div>
+        <div style="font-size:11.5px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.6">⚕️ Analisis ini bersifat edukatif. Bukan diagnosis.</div>
+      </div>
+      <button class="btn-main" id="btn-warisan-analisis" style="margin-top:16px;display:none" onclick="runWarisanAI()">🔬 Analisis Risiko Genetik</button>
+      <div class="ai-loading" id="loading-warisan" style="display:none;margin-top:16px">
+        <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+        <div class="ai-loading-text">AI menganalisis riwayat keluargamu...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: PROFIL -->
+<div class="screen app-body" id="s-profil">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-mark">🌿</div>
+      <div class="logo-name">Cegah<span>Gejala</span></div>
+    </div>
+  </div>
+  <div class="scroll-area fade-in" style="padding-top:16px">
+    <div class="card profile-hero">
+      <div class="profile-av" id="profile-av">R</div>
+      <div class="profile-name" id="profile-name">-</div>
+      <div class="profile-email" id="profile-email">-</div>
+      <div class="profile-badges">
+        <span class="badge badge-green">✅ Akun Terverifikasi</span>
+        <span class="badge badge-blue">🆓 Gratis Selamanya</span>
+      </div>
+    </div>
+
+    <div class="section-label">Akun</div>
+    <div class="card setting-group">
+      <div class="setting-item" onclick="openModal('modal-edit-profile')">
+        <div class="setting-icon">👤</div>
+        <div class="setting-text"><div class="setting-name">Edit Profil</div><div class="setting-sub">Ubah nama tampilan</div></div>
+        <div class="setting-arr">›</div>
+      </div>
+      <div class="setting-item" onclick="openModal('modal-change-pw')">
+        <div class="setting-icon">🔑</div>
+        <div class="setting-text"><div class="setting-name">Ubah Password</div><div class="setting-sub">Ganti kata sandi akunmu</div></div>
+        <div class="setting-arr">›</div>
+      </div>
+      <div class="setting-item">
+        <div class="setting-icon">🔔</div>
+        <div class="setting-text"><div class="setting-name">Notifikasi</div><div class="setting-sub">Pengingat harian aktif</div></div>
+        <div class="toggle" id="notif-toggle" onclick="this.classList.toggle('off')"></div>
+      </div>
+    </div>
+
+    <div class="section-label">Tentang</div>
+    <div class="card setting-group">
+      <div class="setting-item">
+        <div class="setting-icon">ℹ️</div>
+        <div class="setting-text"><div class="setting-name">Versi Aplikasi</div><div class="setting-sub">CegahGejala 1.0.0 — MVP</div></div>
+      </div>
+      <div class="setting-item">
+        <div class="setting-icon">🆓</div>
+        <div class="setting-text"><div class="setting-name">100% Gratis</div><div class="setting-sub">Tidak ada biaya atau kartu kredit</div></div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      ⚕️ <strong>Disclaimer Medis:</strong> CegahGejala adalah platform edukasi preventif. Bukan aplikasi diagnosis dan bukan pengganti dokter atau tenaga medis profesional. Bila merasakan gejala serius, segera konsultasikan ke dokter.
+    </div>
+
+    <button class="btn-danger" onclick="doLogout()">Keluar dari Akun</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="navTo('beranda')" id="nav-beranda">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Beranda</div>
+  </div>
+  <div class="nav-item" onclick="navTo('cek')" id="nav-cek">
+    <div class="nav-icon">🔍</div>
+    <div class="nav-label">Cek</div>
+  </div>
+  <div class="nav-item" onclick="navTo('pantau')" id="nav-pantau">
+    <div class="nav-icon">📓</div>
+    <div class="nav-label">Pantau</div>
+  </div>
+  <div class="nav-item" onclick="navTo('keluarga')" id="nav-keluarga">
+    <div class="nav-icon">👨‍👩‍👧</div>
+    <div class="nav-label">Keluarga</div>
+  </div>
+  <div class="nav-item" onclick="navTo('profil')" id="nav-profil">
+    <div class="nav-icon">👤</div>
+    <div class="nav-label">Profil</div>
+  </div>
+</nav>
+
+</div><!-- /main-app -->
+
+<!-- MODALS -->
+
+<!-- MODAL: JURNAL INPUT -->
+<div class="modal-overlay" id="modal-jurnal-input">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📓 Catat Sinyal Tubuh</div>
+    <div class="modal-sub">Catat gejala yang kamu rasakan hari ini. Semakin rutin, semakin jelas polanya.</div>
+    <div class="q-step">
+      <div class="q-label">Gejala atau keluhan yang dirasakan</div>
+      <input class="q-input" type="text" id="jurnal-gejala" placeholder="Contoh: nyeri kepala, mual, pegal bahu..." style="min-height:auto;padding:13px 16px;">
+    </div>
+    <div class="q-step">
+      <div class="q-label">Lokasi keluhan (opsional)</div>
+      <input class="q-input" type="text" id="jurnal-lokasi" placeholder="Contoh: kepala bagian depan, perut kiri atas..." style="min-height:auto;padding:13px 16px;">
+    </div>
+    <div class="q-step">
+      <div class="q-label">Tingkat intensitas (1 = ringan, 10 = sangat berat)</div>
+      <div class="intensitas-bar" id="int-bar">
+        <div class="int-dot" onclick="setIntensitas(1)"></div><div class="int-dot" onclick="setIntensitas(2)"></div>
+        <div class="int-dot" onclick="setIntensitas(3)"></div><div class="int-dot" onclick="setIntensitas(4)"></div>
+        <div class="int-dot" onclick="setIntensitas(5)"></div><div class="int-dot" onclick="setIntensitas(6)"></div>
+        <div class="int-dot" onclick="setIntensitas(7)"></div><div class="int-dot" onclick="setIntensitas(8)"></div>
+        <div class="int-dot" onclick="setIntensitas(9)"></div><div class="int-dot" onclick="setIntensitas(10)"></div>
+      </div>
+      <div class="int-label" id="int-label-text">Ketuk untuk pilih intensitas</div>
+    </div>
+    <div class="q-step">
+      <div class="q-label">Kemungkinan pemicu (opsional)</div>
+      <div class="q-options">
+        <div class="q-opt" onclick="toggleJurnalTag(this)" data-tag="Kurang tidur">😴 Kurang tidur</div>
+        <div class="q-opt" onclick="toggleJurnalTag(this)" data-tag="Stres/tekanan">😰 Stres / tekanan</div>
+        <div class="q-opt" onclick="toggleJurnalTag(this)" data-tag="Makan tidak teratur">🍽️ Makan tidak teratur</div>
+        <div class="q-opt" onclick="toggleJurnalTag(this)" data-tag="Kurang olahraga">🏃 Kurang olahraga</div>
+        <div class="q-opt" onclick="toggleJurnalTag(this)" data-tag="Cuaca/udara">🌤️ Cuaca / udara</div>
+        <div class="q-opt" onclick="toggleJurnalTag(this)" data-tag="Tidak jelas">❓ Tidak jelas</div>
+      </div>
+    </div>
+    <div class="q-step">
+      <div class="q-label">Catatan tambahan (opsional)</div>
+      <textarea class="q-input" id="jurnal-catatan" placeholder="Apakah ada hal lain yang ingin dicatat?" style="min-height:70px"></textarea>
+    </div>
+    <button class="btn-main" onclick="simpanJurnal()">Simpan Catatan</button>
+    <button class="btn-outline" onclick="closeModal('modal-jurnal-input')">Batal</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- MODAL: PREVENTION PLAN INPUT -->
+<div class="modal-overlay" id="modal-plan-input">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📅 Buat Prevention Plan</div>
+    <div class="modal-sub">AI akan menyusun rencana pencegahan 7 hari yang dipersonalisasi untukmu.</div>
+    <div class="q-step">
+      <div class="q-label">Apa tujuan utama pencegahanmu?</div>
+      <div class="q-options" id="plan-tujuan-opts">
+        <div class="q-opt selected" onclick="selectOpt(this)" data-val="Mengurangi keluhan lambung dan pencernaan">🫁 Kurangi keluhan lambung</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Meningkatkan kualitas tidur">😴 Tingkatkan kualitas tidur</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Mengurangi stres dan tekanan mental">🧠 Kurangi stres</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Memulai rutinitas olahraga">🏃 Mulai rutinitas olahraga</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Memperbaiki pola makan">🥗 Perbaiki pola makan</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Mengurangi keluhan otot dan sendi">💪 Kurangi nyeri otot/sendi</div>
+      </div>
+    </div>
+    <div class="q-step">
+      <div class="q-label">Ceritakan kondisi dan kebiasaanmu saat ini</div>
+      <textarea class="q-input" id="plan-kondisi" placeholder="Contoh: saya sering begadang, makan tidak teratur..." style="min-height:90px"></textarea>
+    </div>
+    <div class="q-step">
+      <div class="q-label">Seberapa sibuk keseharianmu?</div>
+      <div class="q-options">
+        <div class="q-opt selected" onclick="selectOpt(this)" data-val="Sangat sibuk, waktu terbatas">⚡ Sangat sibuk</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Cukup sibuk, bisa luangkan 30 menit sehari">🕐 Cukup sibuk</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Punya cukup waktu untuk perubahan gaya hidup">😌 Punya waktu cukup</div>
+      </div>
+    </div>
+    <button class="btn-main" onclick="buatPlan()" id="btn-buat-plan">Buat Plan dengan AI</button>
+    <div class="ai-loading" id="loading-plan" style="display:none">
+      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      <div class="ai-loading-text">AI sedang menyusun rencana untukmu...</div>
+    </div>
+    <button class="btn-outline" onclick="closeModal('modal-plan-input')">Batal</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- MODAL: WARISAN NODE INPUT -->
+<div class="modal-overlay" id="modal-warisan-node">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="warisan-node-title">Data Kesehatan</div>
+    <div class="modal-sub">Tambahkan penyakit atau kondisi kesehatan yang pernah dialami.</div>
+    <div class="q-step">
+      <div class="q-label">Penyakit atau kondisi kesehatan</div>
+      <div class="penyakit-tags" id="warisan-node-tags"></div>
+      <input class="q-input" type="text" id="warisan-node-input" placeholder="Contoh: hipertensi, diabetes, jantung koroner..." style="min-height:auto;padding:13px 16px;" onkeydown="if(event.key==='Enter'){addWarisanTag();event.preventDefault()}">
+      <button class="btn-outline" onclick="addWarisanTag()" style="padding:10px;font-size:13px;margin-top:8px">+ Tambah</button>
+    </div>
+    <div class="q-step">
+      <div class="q-label">Status</div>
+      <div class="q-options">
+        <div class="q-opt selected" onclick="selectOpt(this)" data-val="Masih hidup dan sehat">✅ Masih hidup, sehat</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Masih hidup dengan penyakit">⚠️ Masih hidup, sakit</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-val="Sudah meninggal">🕊️ Sudah meninggal</div>
+      </div>
+    </div>
+    <button class="btn-main" onclick="simpanWarisanNode()">Simpan</button>
+    <button class="btn-outline" onclick="closeModal('modal-warisan-node')">Batal</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- CEGAH DULU -->
+<div class="modal-overlay" id="modal-cegah">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🛡️ Cegah Dulu</div>
+    <div class="modal-sub">Ceritakan kebiasaan harianmu. AI akan menganalisis area risiko dan langkah pencegahan yang relevan untukmu secara edukatif — bukan diagnosis.</div>
+    <div class="q-step">
+      <div class="q-label">Ceritakan kebiasaan dan gaya hidupmu sehari-hari. Semakin detail, semakin akurat analisisnya.</div>
+      <textarea class="q-input" id="cegah-input" placeholder="Contoh: Saya sering makan tidak teratur, suka rebahan setelah makan, tidur larut malam hampir setiap hari, jarang olahraga, dan sering stres karena pekerjaan..."></textarea>
+    </div>
+    <button class="btn-main" onclick="runAI('cegah')" id="btn-cegah">Analisis Kebiasaanku</button>
+    <div class="ai-loading" id="loading-cegah" style="display:none">
+      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      <div class="ai-loading-text">AI sedang menganalisis kebiasaanmu...</div>
+    </div>
+    <div id="result-cegah" style="display:none">
+      <div class="result-box">
+        <div class="result-title">📊 Pemetaan Risiko Awal</div>
+        <div class="ai-response" id="ai-cegah-main"></div>
+      </div>
+      <div class="redflag-box" style="margin-top:12px">
+        <div class="redflag-title">🚨 Tanda yang Tidak Boleh Diabaikan</div>
+        <div class="ai-response" id="ai-cegah-flags"></div>
+      </div>
+      <div class="gap"></div>
+      <button class="btn-main" onclick="closeModal('modal-cegah')">Simpan & Tutup</button>
+      <button class="btn-outline" onclick="document.getElementById('cegah-input').value='';document.getElementById('result-cegah').style.display='none'">Analisis Ulang</button>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- GEJALA AWAL -->
+<div class="modal-overlay" id="modal-gejala">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔍 Gejala Awal</div>
+    <div class="modal-sub">Ceritakan keluhan yang sedang kamu rasakan. AI akan memberikan panduan awal yang edukatif — ini bukan diagnosis medis.</div>
+    <div class="q-step">
+      <div class="q-label">Keluhan atau gejala apa yang sedang kamu rasakan? Jelaskan dengan detail.</div>
+      <textarea class="q-input" id="gejala-input" placeholder="Contoh: Saya merasakan nyeri dan rasa panas di ulu hati terutama setelah makan, sudah berlangsung sekitar 3 hari. Sering juga mual ringan di pagi hari..."></textarea>
+    </div>
+    <button class="btn-main" onclick="runAI('gejala')" id="btn-gejala">Analisis Gejalaku</button>
+    <div class="ai-loading" id="loading-gejala" style="display:none">
+      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      <div class="ai-loading-text">AI sedang menganalisis gejalamu...</div>
+    </div>
+    <div id="result-gejala" style="display:none">
+      <div class="result-box">
+        <div class="result-title">📋 Panduan Awal</div>
+        <div class="ai-response" id="ai-gejala-main"></div>
+      </div>
+      <div class="redflag-box" style="margin-top:12px">
+        <div class="redflag-title">🚨 Segera Cari Bantuan Medis Jika</div>
+        <div class="ai-response" id="ai-gejala-flags"></div>
+      </div>
+      <div class="gap"></div>
+      <button class="btn-main" onclick="closeModal('modal-gejala')">Tutup</button>
+      <button class="btn-outline" onclick="document.getElementById('gejala-input').value='';document.getElementById('result-gejala').style.display='none'">Analisis Ulang</button>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- CEK HOAX -->
+<div class="modal-overlay" id="modal-hoax">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔎 Cek Hoax Kesehatan</div>
+    <div class="modal-sub">Paste pesan forward dari WhatsApp atau klaim kesehatan dari media sosial. AI akan memverifikasi kebenarannya berdasarkan fakta medis terpercaya.</div>
+    <div class="q-step">
+      <div class="q-label">Teks pesan atau klaim kesehatan yang ingin dicek:</div>
+      <textarea class="q-input" id="hoax-input" placeholder="Contoh: 'Minum air hangat + lemon setiap pagi bisa membunuh sel kanker...'"></textarea>
+    </div>
+    <button class="btn-main" onclick="runAI('hoax')" id="btn-hoax">Verifikasi Sekarang</button>
+    <div class="ai-loading" id="loading-hoax" style="display:none">
+      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      <div class="ai-loading-text">AI sedang memverifikasi klaim ini...</div>
+    </div>
+    <div id="result-hoax" style="display:none">
+      <div class="verdict-card" id="verdict-card-hoax">
+        <div class="verdict-label" id="verdict-label-hoax">Menganalisis...</div>
+        <div class="verdict-title" id="verdict-title-hoax"></div>
+        <div class="ai-response" id="ai-hoax-main"></div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--text3);text-align:center;line-height:1.6">
+        Hasil ini bersifat edukatif. Untuk konfirmasi lebih lanjut, konsultasikan dengan tenaga medis.
+      </div>
+      <div class="gap"></div>
+      <button class="btn-main" onclick="closeModal('modal-hoax')">Tutup</button>
+      <button class="btn-outline" onclick="document.getElementById('hoax-input').value='';document.getElementById('result-hoax').style.display='none'">Cek Lagi</button>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- CEK KEROKAN -->
+<div class="modal-overlay" id="modal-kerokan">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🌿 Cek Kerokan-mu</div>
+    <div class="modal-sub">Tanya tentang pengobatan atau terapi tradisional Indonesia yang ingin kamu lakukan. AI akan memberikan evaluasi edukatif berbasis bukti medis.</div>
+    <div class="q-step">
+      <div class="q-label">Pengobatan tradisional apa yang ingin kamu cek?</div>
+      <textarea class="q-input" id="kerokan-input" placeholder="Contoh: Saya ingin kerokan karena badan pegal-pegal dan terasa masuk angin sejak kemarin..."></textarea>
+    </div>
+    <button class="btn-main" onclick="runAI('kerokan')" id="btn-kerokan">Evaluasi Pengobatan Ini</button>
+    <div class="ai-loading" id="loading-kerokan" style="display:none">
+      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      <div class="ai-loading-text">AI sedang mengevaluasi...</div>
+    </div>
+    <div id="result-kerokan" style="display:none">
+      <div class="result-box">
+        <div class="result-title">📋 Evaluasi Pengobatan Tradisional</div>
+        <div class="ai-response" id="ai-kerokan-main"></div>
+      </div>
+      <div class="caution-box" style="margin-top:12px">
+        <div class="caution-title">⚠️ Perhatian & Batasan</div>
+        <div class="ai-response" id="ai-kerokan-caution"></div>
+      </div>
+      <div class="redflag-box" style="margin-top:10px">
+        <div class="redflag-title">⛔ Jangan Lakukan Bila</div>
+        <div class="ai-response" id="ai-kerokan-flags"></div>
+      </div>
+      <div class="gap"></div>
+      <button class="btn-main" onclick="closeModal('modal-kerokan')">Mengerti</button>
+      <button class="btn-outline" onclick="document.getElementById('kerokan-input').value='';document.getElementById('result-kerokan').style.display='none'">Tanya Lagi</button>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- KALAU DIABAIKAN -->
+<div class="modal-overlay" id="modal-diabaikan">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚠️ Kalau Diabaikan</div>
+    <div class="modal-sub">Ceritakan kebiasaan atau gejala yang terus kamu abaikan. AI akan memberikan proyeksi edukatif tentang risiko jangka panjang.</div>
+    <div class="q-step">
+      <div class="q-label">Kebiasaan atau gejala apa yang sering kamu abaikan?</div>
+      <textarea class="q-input" id="diabaikan-input" placeholder="Contoh: Saya sering merasa nyeri ulu hati tapi tidak pernah ditangani, sudah berlangsung berbulan-bulan..."></textarea>
+    </div>
+    <button class="btn-main" onclick="runAI('diabaikan')" id="btn-diabaikan">Lihat Proyeksi Risiko</button>
+    <div class="ai-loading" id="loading-diabaikan" style="display:none">
+      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      <div class="ai-loading-text">AI sedang membuat proyeksi...</div>
+    </div>
+    <div id="result-diabaikan" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);margin:20px 0 12px">📅 Proyeksi Jika Terus Diabaikan</div>
+      <div class="card" style="padding:14px 16px;border-left:4px solid var(--primary);border-radius:var(--radius-sm);margin-bottom:8px">
+        <div class="badge badge-green" style="margin-bottom:8px">1 Bulan</div>
+        <div class="ai-response" id="ai-d-1m"></div>
+      </div>
+      <div class="card" style="padding:14px 16px;border-left:4px solid #84CC16;border-radius:var(--radius-sm);margin-bottom:8px">
+        <div class="badge" style="background:rgba(132,204,22,0.1);color:#4D7C0F;margin-bottom:8px">3 Bulan</div>
+        <div class="ai-response" id="ai-d-3m"></div>
+      </div>
+      <div class="card" style="padding:14px 16px;border-left:4px solid var(--warn);border-radius:var(--radius-sm);margin-bottom:8px">
+        <div class="badge badge-warn" style="margin-bottom:8px">6 Bulan</div>
+        <div class="ai-response" id="ai-d-6m"></div>
+      </div>
+      <div class="card" style="padding:14px 16px;border-left:4px solid #F97316;border-radius:var(--radius-sm);margin-bottom:8px">
+        <div class="badge" style="background:rgba(249,115,22,0.1);color:#C2410C;margin-bottom:8px">1 Tahun</div>
+        <div class="ai-response" id="ai-d-1y"></div>
+      </div>
+      <div class="card" style="padding:14px 16px;border-left:4px solid var(--danger);border-radius:var(--radius-sm);margin-bottom:8px">
+        <div class="badge badge-danger" style="margin-bottom:8px">3 Tahun</div>
+        <div class="ai-response" id="ai-d-3y"></div>
+      </div>
+      <div class="card" style="padding:14px 16px;border-left:4px solid #7F1D1D;border-radius:var(--radius-sm);margin-bottom:8px">
+        <div class="badge" style="background:rgba(127,29,29,0.1);color:#7F1D1D;margin-bottom:8px">5 Tahun</div>
+        <div class="ai-response" id="ai-d-5y"></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--text3);text-align:center;line-height:1.6;margin-top:12px;font-style:italic">
+        Proyeksi ini bersifat edukatif. Bukan prediksi medis. Tujuannya mendorongmu untuk mulai mencegah lebih cepat.
+      </div>
+      <div class="gap"></div>
+      <button class="btn-main" onclick="closeModal('modal-diabaikan')">Saya Akan Berubah</button>
+      <button class="btn-outline" onclick="document.getElementById('diabaikan-input').value='';document.getElementById('result-diabaikan').style.display='none'">Coba Lagi</button>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- TAMBAH ANGGOTA KELUARGA -->
+<div class="modal-overlay" id="modal-add-member">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">👥 Tambah Anggota Keluarga</div>
+    <div class="modal-sub">Tambahkan anggota keluarga untuk dipantau kondisi kesehatannya.</div>
+    <div class="q-step">
+      <div class="q-label">Nama Anggota Keluarga</div>
+      <input class="q-input" type="text" id="member-name-input" placeholder="Contoh: Ayah, Ibu, Kakek..." style="min-height:auto;padding:13px 16px;">
+    </div>
+    <div class="q-step">
+      <div class="q-label">Hubungan dengan kamu</div>
+      <div class="q-options">
+        <div class="q-opt selected" onclick="selectOpt(this)" data-rel="Ayah">👨 Ayah</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-rel="Ibu">👩 Ibu</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-rel="Kakek">🧓 Kakek</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-rel="Nenek">👵 Nenek</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-rel="Saudara">👦 Saudara / Saudari</div>
+        <div class="q-opt" onclick="selectOpt(this)" data-rel="Lainnya">👤 Lainnya</div>
+      </div>
+    </div>
+    <div class="q-step">
+      <div class="q-label">Usia</div>
+      <input class="q-input" type="number" id="member-age-input" placeholder="Contoh: 58" style="min-height:auto;padding:13px 16px;">
+    </div>
+    <button class="btn-main" onclick="addFamilyMember()">Tambahkan</button>
+    <button class="btn-outline" onclick="closeModal('modal-add-member')">Batal</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- KELUARGA DETAIL -->
+<div class="modal-overlay" id="modal-family-detail">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+
+    <!-- Header: nama anggota + tombol hapus -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="modal-title" id="fam-detail-title" style="margin-bottom:0">Detail Anggota</div>
+      <button onclick="hapusMember()" style="background:var(--danger-pale);border:1px solid rgba(220,38,38,0.2);color:var(--danger);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">🗑️ Hapus</button>
+    </div>
+    <div class="modal-sub" id="fam-detail-sub"></div>
+
+    <!-- BAGIAN 1: Data kesehatan ANGGOTA KELUARGA -->
+    <div style="background:var(--warn-pale);border:1.5px solid rgba(217,119,6,0.15);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--warn);margin-bottom:12px">👤 Data Kesehatan <span id="fam-detail-nama">Anggota Keluarga</span></div>
+      <div class="q-label" style="margin-bottom:8px">Penyakit atau keluhan yang pernah / sedang dialami:</div>
+      <div class="penyakit-tags" id="penyakit-selected"></div>
+      <input class="q-input" type="text" id="penyakit-input"
+        placeholder="Contoh: hipertensi, diabetes, kolesterol..."
+        style="min-height:auto;padding:11px 14px;"
+        onkeydown="if(event.key==='Enter'){addPenyakit();event.preventDefault()}">
+      <button class="btn-outline" onclick="addPenyakit()" style="padding:8px;font-size:12.5px;margin-top:8px">+ Tambah Penyakit / Keluhan</button>
+    </div>
+
+    <!-- BAGIAN 2: Profil KAMU (pengguna app) untuk analisis genetik -->
+    <div style="background:var(--primary-pale);border:1.5px solid rgba(26,127,110,0.15);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:4px">🧬 Profil Kamu (Pengguna)</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5">Isi data dirimu sendiri agar AI bisa menganalisis risiko genetik yang mungkin kamu warisi dari anggota keluarga ini.</div>
+
+      <div style="margin-bottom:12px">
+        <div class="q-label">Usiamu saat ini</div>
+        <input class="q-input" type="number" id="user-age-input" placeholder="Contoh: 28" style="min-height:auto;padding:11px 14px;">
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div class="q-label">Jenis kelaminmu</div>
+        <div style="display:flex;gap:8px">
+          <div class="q-opt selected" onclick="selectOptGroup(this,'gender')" data-val="Laki-laki" style="flex:1;justify-content:center;padding:10px">👨 Laki-laki</div>
+          <div class="q-opt" onclick="selectOptGroup(this,'gender')" data-val="Perempuan" style="flex:1;justify-content:center;padding:10px">👩 Perempuan</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div class="q-label">Apakah kamu merokok?</div>
+        <div style="display:flex;gap:8px">
+          <div class="q-opt" onclick="selectOptGroup(this,'rokok')" data-val="Ya, aktif merokok" style="flex:1;justify-content:center;padding:10px">🚬 Ya</div>
+          <div class="q-opt" onclick="selectOptGroup(this,'rokok')" data-val="Sudah berhenti" style="flex:1;justify-content:center;padding:10px">⭕ Berhenti</div>
+          <div class="q-opt selected" onclick="selectOptGroup(this,'rokok')" data-val="Tidak merokok" style="flex:1;justify-content:center;padding:10px">✅ Tidak</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div class="q-label">Seberapa sering kamu olahraga?</div>
+        <div class="q-options">
+          <div class="q-opt" onclick="selectOptGroup(this,'olahraga')" data-val="Jarang atau tidak pernah" style="padding:10px">😴 Jarang / tidak pernah</div>
+          <div class="q-opt selected" onclick="selectOptGroup(this,'olahraga')" data-val="Olahraga ringan 1-2x seminggu" style="padding:10px">🚶 1–2x seminggu</div>
+          <div class="q-opt" onclick="selectOptGroup(this,'olahraga')" data-val="Olahraga rutin 3x seminggu atau lebih" style="padding:10px">🏃 3x+ seminggu (rutin)</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="q-label">Kondisi kesehatanmu sendiri (jika ada)</div>
+        <input class="q-input" type="text" id="user-kondisi-input" placeholder="Contoh: kolesterol tinggi, prediabetes — kosongkan jika tidak ada" style="min-height:auto;padding:11px 14px;">
+      </div>
+    </div>
+
+    <button class="btn-main" onclick="runAI('keluarga')" id="btn-keluarga">🔬 Analisis Risiko & Dapatkan Saran AI</button>
+    <div class="ai-loading" id="loading-keluarga" style="display:none">
+      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      <div class="ai-loading-text">AI menganalisis risiko genetik dan saran kesehatan...</div>
+    </div>
+
+    <div id="result-keluarga" style="display:none">
+      <div class="result-box" style="margin-top:16px">
+        <div class="result-title">💡 Saran untuk <span class="fam-name-ref">Anggota Keluarga</span></div>
+        <div class="ai-response" id="ai-kel-main"></div>
+      </div>
+      <div style="background:var(--primary-pale);border:1.5px solid rgba(26,127,110,0.2);border-radius:var(--radius-sm);padding:18px;margin-top:12px">
+        <div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:10px">🧬 Risiko Genetik untuk Kamu</div>
+        <div class="ai-response" id="ai-kel-risk"></div>
+      </div>
+      <div style="background:var(--warn-pale);border:1.5px solid rgba(217,119,6,0.2);border-radius:var(--radius-sm);padding:18px;margin-top:12px">
+        <div style="font-size:13px;font-weight:800;color:var(--warn);margin-bottom:10px">🛡️ Langkah Pencegahan Untukmu</div>
+        <div class="ai-response" id="ai-kel-prevention"></div>
+      </div>
+      <div class="gap"></div>
+      <button class="btn-main" onclick="closeModal('modal-family-detail')">Tutup</button>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- EDIT PROFIL -->
+<div class="modal-overlay" id="modal-edit-profile">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Edit Profil</div>
+    <div class="q-step" style="margin-top:8px">
+      <div class="q-label">Nama Lengkap</div>
+      <input class="q-input" type="text" id="edit-name-input" placeholder="Nama kamu" style="min-height:auto;padding:13px 16px;">
+    </div>
+    <button class="btn-main" onclick="saveProfile()">Simpan Perubahan</button>
+    <button class="btn-outline" onclick="closeModal('modal-edit-profile')">Batal</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- UBAH PASSWORD -->
+<div class="modal-overlay" id="modal-change-pw">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔑 Ubah Password</div>
+    <div class="auth-error" id="pw-error"></div>
+    <div class="q-step" style="margin-top:8px">
+      <div class="q-label">Password Lama</div>
+      <input class="q-input" type="password" id="pw-old" placeholder="Password saat ini" style="min-height:auto;padding:13px 16px;">
+    </div>
+    <div class="q-step">
+      <div class="q-label">Password Baru</div>
+      <input class="q-input" type="password" id="pw-new" placeholder="Min. 6 karakter" style="min-height:auto;padding:13px 16px;">
+    </div>
+    <div class="q-step">
+      <div class="q-label">Konfirmasi Password Baru</div>
+      <input class="q-input" type="password" id="pw-new2" placeholder="Ulangi password baru" style="min-height:auto;padding:13px 16px;">
+    </div>
+    <button class="btn-main" onclick="changePassword()">Simpan Password Baru</button>
+    <button class="btn-outline" onclick="closeModal('modal-change-pw')">Batal</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// KONFIGURASI — ISI SESUAI PROJECT FIREBASE KAMU
+// ══════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyAbknw-b0HK-08zjgV7Q347j0cEJyFEyR8",
+  authDomain: "cegahgejala-70781.firebaseapp.com",
+  projectId: "cegahgejala-70781",
+  storageBucket: "cegahgejala-70781.firebasestorage.app",
+  messagingSenderId: "300568484997",
+  appId: "1:300568484997:web:11172856a504a9498a1dec"
+};
+
+// AI via Cloudflare Worker → Groq (gratis 14.400 req/hari, tanpa kartu kredit)
+const WORKER_URL = "https://cegahgejala-ai.appzayd-cegahgejala.workers.dev";
+
+// ══════════════════════════════════════════════════════════
+// INISIALISASI FIREBASE
+// ══════════════════════════════════════════════════════════
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+let db = null;
+
+// Coba inisialisasi Firestore — jika belum aktif, tetap lanjut
+try {
+  db = firebase.firestore();
+} catch(e) {
+  console.warn('Firestore tidak tersedia, pakai localStorage sebagai fallback.');
+}
+
+// ══════════════════════════════════════════════════════════
+// STORAGE FALLBACK (localStorage jika Firestore tidak tersedia)
+// ══════════════════════════════════════════════════════════
+const LS = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  del: k => { try { localStorage.removeItem(k); } catch {} }
+};
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let currentUser   = null;
+let familyMembers = [];
+let activeMember  = null;
+
+// ══════════════════════════════════════════════════════════
+// SCREEN HELPER
+// ══════════════════════════════════════════════════════════
+function showScreen(id) {
+  // Hanya toggle screen auth (login & register) — jangan sentuh screen di dalam main-app
+  document.getElementById('s-login').classList.remove('active');
+  document.getElementById('s-register').classList.remove('active');
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════
+// REGISTER
+// ══════════════════════════════════════════════════════════
+async function doRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pw    = document.getElementById('reg-password').value;
+  const pw2   = document.getElementById('reg-password2').value;
+  const errEl = document.getElementById('reg-error');
+  const btn   = document.getElementById('btn-register');
+
+  errEl.style.display = 'none';
+
+  // Validasi lokal
+  if (!name)          { showErr(errEl, 'Nama lengkap wajib diisi.'); return; }
+  if (!email)         { showErr(errEl, 'Email wajib diisi.'); return; }
+  if (pw.length < 6)  { showErr(errEl, 'Password minimal 6 karakter.'); return; }
+  if (pw !== pw2)     { showErr(errEl, 'Konfirmasi password tidak cocok.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Mendaftar...';
+
+  try {
+    // 1. Buat akun di Firebase Authentication
+    const cred = await auth.createUserWithEmailAndPassword(email, pw);
+
+    // 2. Update displayName (tidak kritis, abaikan error)
+    try { await cred.user.updateProfile({ displayName: name }); } catch {}
+
+    // 3. Simpan nama ke Firestore (tidak kritis — abaikan error jika Firestore belum aktif)
+    if (db) {
+      try {
+        await db.collection('users').doc(cred.user.uid).set({
+          name,
+          email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (fsErr) {
+        // Firestore gagal (mungkin belum diaktifkan) — simpan ke localStorage sebagai backup
+        console.warn('Firestore write gagal, simpan ke localStorage:', fsErr.message);
+        LS.set('cg_name_' + cred.user.uid, name);
+      }
+    } else {
+      LS.set('cg_name_' + cred.user.uid, name);
+    }
+
+    // 4. Login berhasil
+    await loginSuccess({ uid: cred.user.uid, name, email });
+
+  } catch (e) {
+    const msgs = {
+      'auth/email-already-in-use': 'Email sudah terdaftar. Silakan login.',
+      'auth/invalid-email':        'Format email tidak valid.',
+      'auth/weak-password':        'Password terlalu lemah. Minimal 6 karakter.',
+      'auth/network-request-failed': 'Tidak ada koneksi internet.'
+    };
+    showErr(errEl, msgs[e.code] || ('Gagal mendaftar: ' + (e.message || 'Coba lagi.')));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Buat Akun Gratis';
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════════════════
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn   = document.getElementById('btn-login');
+
+  errEl.style.display = 'none';
+
+  if (!email || !pw) { showErr(errEl, 'Email dan password wajib diisi.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Masuk...';
+
+  try {
+    const cred = await auth.signInWithEmailAndPassword(email, pw);
+
+    // Ambil nama — coba Firestore dulu, fallback ke localStorage, lalu displayName/email
+    let name = cred.user.displayName || '';
+
+    if (db) {
+      try {
+        const snap = await db.collection('users').doc(cred.user.uid).get();
+        if (snap.exists && snap.data().name) name = snap.data().name;
+      } catch {}
+    }
+
+    // Cek localStorage backup
+    if (!name) name = LS.get('cg_name_' + cred.user.uid) || '';
+    // Fallback ke prefix email
+    if (!name) name = email.split('@')[0];
+
+    await loginSuccess({ uid: cred.user.uid, name, email });
+
+  } catch (e) {
+    const msgs = {
+      'auth/user-not-found':        'Email tidak ditemukan.',
+      'auth/wrong-password':        'Password salah.',
+      'auth/invalid-credential':    'Email atau password salah.',
+      'auth/invalid-email':         'Format email tidak valid.',
+      'auth/too-many-requests':     'Terlalu banyak percobaan. Coba lagi nanti.',
+      'auth/network-request-failed':'Tidak ada koneksi internet.'
+    };
+    showErr(errEl, msgs[e.code] || 'Email atau password salah.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Masuk';
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// HELPER: tampilkan error
+// ══════════════════════════════════════════════════════════
+function showErr(el, msg) {
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════════
+// LOGIN SUCCESS
+// ══════════════════════════════════════════════════════════
+async function loginSuccess(user) {
+  currentUser = user;
+
+  // Ambil data keluarga
+  if (db && user.uid) {
+    try {
+      const snap = await db.collection('family').doc(user.uid).get();
+      familyMembers = snap.exists ? (snap.data().members || []) : [];
+    } catch {
+      familyMembers = LS.get('cg_family_' + user.uid) || [];
+    }
+  } else {
+    familyMembers = LS.get('cg_family_' + (user.uid || user.email)) || [];
+  }
+
+  // Sembunyikan semua screen auth
+  document.getElementById('s-login').classList.remove('active');
+  document.getElementById('s-register').classList.remove('active');
+
+  // Tampilkan main app
+  document.getElementById('main-app').style.display = 'block';
+  updateUI();
+  navTo('beranda');
+}
+
+// ══════════════════════════════════════════════════════════
+// LOGOUT
+// ══════════════════════════════════════════════════════════
+async function doLogout() {
+  try { await auth.signOut(); } catch {}
+  currentUser = null;
+  familyMembers = [];
+  // Sembunyikan main-app dan semua screen di dalamnya
+  document.getElementById('main-app').style.display = 'none';
+  // Reset nav state
+  ['beranda','cek','pantau','keluarga','profil'].forEach(s => {
+    const scr = document.getElementById('s-' + s);
+    const nav = document.getElementById('nav-' + s);
+    if (scr) scr.classList.remove('active');
+    if (nav) nav.classList.remove('active');
+  });
+  // Kosongkan form login
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  // Tampilkan halaman login
+  document.getElementById('s-register').classList.remove('active');
+  document.getElementById('s-login').classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════
+// UPDATE UI
+// ══════════════════════════════════════════════════════════
+function updateUI() {
+  if (!currentUser) return;
+  const firstName = currentUser.name.split(' ')[0];
+  const initial   = firstName[0].toUpperCase();
+  const h = new Date().getHours();
+  const greeting = h < 11 ? 'Selamat pagi' : h < 15 ? 'Selamat siang' : h < 18 ? 'Selamat sore' : 'Selamat malam';
+
+  document.getElementById('hero-greeting').textContent  = `${greeting}, ${firstName} 👋`;
+  document.getElementById('av-btn').textContent         = initial;
+  document.getElementById('profile-av').textContent     = initial;
+  document.getElementById('profile-name').textContent   = currentUser.name;
+  document.getElementById('profile-email').textContent  = currentUser.email;
+  document.getElementById('av-self').textContent        = initial;
+
+  renderFamilyMembers();
+}
+
+// ══════════════════════════════════════════════════════════
+// SESSION CHECK ON LOAD
+// Pakai onAuthStateChanged agar session tetap ada setelah refresh
+// ══════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Pastikan main-app tersembunyi dulu saat load
+  document.getElementById('main-app').style.display = 'none';
+
+  auth.onAuthStateChanged(async (firebaseUser) => {
+    if (firebaseUser) {
+      // User sudah login sebelumnya (session aktif)
+      let name = firebaseUser.displayName || '';
+
+      if (db) {
+        try {
+          const snap = await db.collection('users').doc(firebaseUser.uid).get();
+          if (snap.exists && snap.data().name) name = snap.data().name;
+        } catch {}
+      }
+
+      if (!name) name = LS.get('cg_name_' + firebaseUser.uid) || '';
+      if (!name) name = firebaseUser.email.split('@')[0];
+
+      await loginSuccess({ uid: firebaseUser.uid, name, email: firebaseUser.email });
+    } else {
+      // Belum login — tampilkan halaman login saja
+      document.getElementById('main-app').style.display = 'none';
+      document.getElementById('s-register').classList.remove('active');
+      document.getElementById('s-login').classList.add('active');
+    }
+  });
+});
+
+// ══════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════
+function navTo(name) {
+  ['beranda','cek','pantau','keluarga','profil'].forEach(s => {
+    const scr = document.getElementById('s-' + s);
+    const nav = document.getElementById('nav-' + s);
+    if (scr) scr.classList.remove('active');
+    if (nav) nav.classList.remove('active');
+  });
+  const target = document.getElementById('s-' + name);
+  const navT   = document.getElementById('nav-' + name);
+  if (target) target.classList.add('active');
+  if (navT)   navT.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Pastikan s-beranda tidak punya class active saat halaman pertama load
+// (akan diset ulang oleh navTo setelah login berhasil)
+document.addEventListener('DOMContentLoaded', () => {
+  const beranda = document.getElementById('s-beranda');
+  if (beranda) beranda.classList.remove('active');
+});
+
+// ══════════════════════════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════════════════════════
+function openModal(id) {
+  if (id === 'modal-edit-profile' && currentUser) {
+    setTimeout(() => {
+      const inp = document.getElementById('edit-name-input');
+      if (inp) inp.value = currentUser.name;
+    }, 50);
+  }
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('open'); document.body.style.overflow = 'hidden'; }
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.remove('open'); document.body.style.overflow = ''; }
+}
+
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+});
+
+// ══════════════════════════════════════════════════════════
+// SELECT OPT
+// ══════════════════════════════════════════════════════════
+function selectOpt(el) {
+  const group = el.closest('.q-options');
+  if (!group) return;
+  group.querySelectorAll('.q-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// Untuk pilihan dengan group name (keluarga form)
+function selectOptGroup(el, groupName) {
+  document.querySelectorAll(`[onclick*="${groupName}"]`).forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// Render teks AI dengan format bullet, bold, dan newline yang rapi
+function renderAIText(elId, text) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!text) { el.innerHTML = ''; return; }
+  // Bersihkan semua sisa markdown formatting
+  let t = text
+    .replace(/^#+\s*/gm, '')           // hapus heading ## ###
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // **bold** -> <strong>
+    .replace(/\*(.+?)\*/g, '$1')       // *italic* -> plain
+    .replace(/_{1,2}(.+?)_{1,2}/g, '$1') // _italic_ -> plain
+    .trim();
+  // Split per baris, render bullet dengan indentasi rapi
+  const lines = t.split('\n');
+  let html = '';
+  let inList = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<div style="height:8px"></div>';
+      continue;
+    }
+    // Bullet point
+    if (/^[•\-\*]\s+/.test(line)) {
+      if (!inList) { html += '<ul style="padding-left:18px;margin:6px 0">'; inList = true; }
+      const content = line.replace(/^[•\-\*]\s+/, '');
+      html += '<li style="margin-bottom:6px;line-height:1.6;color:var(--text2)">' + content + '</li>';
+    }
+    // Numbered list
+    else if (/^\d+\.\s+/.test(line)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      const content = line.replace(/^\d+\.\s+/, '');
+      html += '<div style="padding:4px 0 4px 4px;line-height:1.6;color:var(--text2)">' + content + '</div>';
+    }
+    // Normal line
+    else {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<p style="margin:4px 0;line-height:1.7;color:var(--text2)">' + line + '</p>';
+    }
+  }
+  if (inList) html += '</ul>';
+  el.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// AI ENGINE — GROQ (Llama 3)
+// Gratis 14.400 req/hari — https://console.groq.com
+// API key disimpan aman di Cloudflare Worker (tidak terekspos di HTML)
+// ══════════════════════════════════════════════════════════
+const SYSTEM_HEALTH = `Kamu adalah CegahGejala, platform edukasi kesehatan preventif berbasis bukti ilmiah untuk masyarakat Indonesia.
+
+## IDENTITAS & PERAN
+Kamu berperan seperti dokter keluarga yang terpercaya — hangat, empatik, dan berbicara dengan bahasa sehari-hari yang mudah dipahami. Kamu BUKAN dokter, dan selalu menjelaskan bahwa informasimu bersifat edukatif.
+
+## AKURASI MEDIS — PRIORITAS UTAMA
+- Setiap klaim medis HARUS berdasarkan bukti ilmiah yang sudah mapan (evidence-based medicine)
+- JANGAN mengarang angka, statistik, atau fakta medis yang tidak kamu yakini kebenarannya
+- Jika data spesifik tidak tersedia, gunakan frasa: "penelitian menunjukkan", "menurut panduan klinis", "secara umum diketahui dalam ilmu kedokteran"
+- JANGAN memberikan angka persentase palsu — lebih baik deskriptif ("risiko lebih tinggi") daripada angka yang tidak akurat
+- Rujukan yang BOLEH disebutkan: WHO, Kemenkes RI, PAPDI, IDAI, IDI, Mayo Clinic, WebMD, New England Journal of Medicine, Lancet
+- Gunakan frasa aman: "mungkin berkaitan dengan", "sering dikaitkan dengan", "bukti menunjukkan", "perlu dipantau"
+
+## FORMAT OUTPUT WAJIB
+- Gunakan **teks tebal** untuk judul/subjudul penting
+- Setiap poin diawali dengan • (bullet)
+- Satu bullet = satu ide/saran yang jelas dan spesifik
+- Pisahkan bagian dengan baris kosong
+- Akhiri SETIAP jawaban dengan:
+  "📚 Sumber referensi: [sebutkan sumber spesifik yang relevan]"
+  "⚕️ Informasi ini bersifat edukatif, bukan diagnosis medis."
+
+## PERSONALISASI
+- Selalu hubungkan saran dengan konteks SPESIFIK yang diberikan pengguna
+- Jangan berikan jawaban template yang sama untuk semua orang
+- Bedakan saran berdasarkan usia, jenis kelamin, kebiasaan, dan kondisi yang disebutkan
+
+## LARANGAN KERAS
+- DILARANG membuat diagnosis penyakit spesifik
+- DILARANG memberikan statistik/angka yang tidak akurat atau dikarang-karang
+- DILARANG memberikan jawaban generik yang tidak relevan dengan input pengguna
+- DILARANG menakut-nakuti dengan pernyataan yang berlebihan`;
+
+async function callAI(userPrompt) {
+  if (!WORKER_URL || !WORKER_URL.startsWith('https://')) {
+    return '[MODE DEMO — Worker belum dikonfigurasi]';
+  }
+
+  // Format OpenAI-compatible (Groq API)
+  // Model: llama-3.3-70b-versatile — lebih akurat untuk konten medis
+  const resp = await fetch(WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      messages: [
+        { role: 'system', content: SYSTEM_HEALTH },
+        { role: 'user',   content: userPrompt }
+      ],
+      model: 'llama-3.3-70b-versatile',
+      max_tokens: 2500,
+      temperature: 0.3
+    })
+  });
+
+  if (!resp.ok) {
+    const errData = await resp.json().catch(() => ({}));
+    const errMsg  = errData?.error?.message || resp.statusText;
+    if (resp.status === 429) throw new Error('Kuota AI hari ini sudah habis. Coba lagi besok.');
+    if (resp.status === 401 || resp.status === 403) throw new Error('API Key Groq tidak valid. Periksa konfigurasi Worker.');
+    throw new Error('AI error: ' + errMsg);
+  }
+
+  const data = await resp.json();
+  // Format response Groq (OpenAI-compatible)
+  return data?.choices?.[0]?.message?.content || 'Maaf, AI tidak dapat memproses permintaan ini. Coba lagi.';
+}
+
+// ══════════════════════════════════════════════════════════
+// RUN AI
+// ══════════════════════════════════════════════════════════
+async function runAI(type) {
+  const configs = {
+    cegah: {
+      inputId: 'cegah-input', btnId: 'btn-cegah', loadingId: 'loading-cegah', resultId: 'result-cegah',
+      buildPrompt: inp => `Seorang pengguna menceritakan kebiasaan hariannya dan ingin tahu risiko kesehatan yang mungkin perlu diperhatikan.
+
+Kebiasaan pengguna: "${inp}"
+
+Tugasmu: Analisis setiap kebiasaan yang disebutkan secara individual dan spesifik. Jangan buat analisis umum — fokus pada apa yang BENAR-BENAR disebutkan pengguna.
+
+PEMETAAN RISIKO AWAL
+
+Untuk setiap kebiasaan yang disebutkan, berikan:
+• **[Kebiasaan spesifik]:** Apa yang terjadi pada tubuh jika kebiasaan ini dilanjutkan, area tubuh mana yang paling terdampak, dan satu langkah perubahan kecil yang realistis untuk mulai hari ini.
+
+Setelah semua kebiasaan dianalisis, tambahkan:
+• **Interaksi antar kebiasaan:** Apakah ada kombinasi kebiasaan yang saling memperburuk?
+• **Prioritas yang perlu diperbaiki dulu:** Kebiasaan mana yang paling mendesak diubah dan kenapa?
+
+Akhiri bagian ini dengan:
+📚 Sumber referensi: [sebutkan panduan atau sumber medis yang relevan dengan kebiasaan yang disebutkan, misalnya panduan WHO tentang aktivitas fisik, atau Pedoman Gizi Kemenkes RI]
+⚕️ Informasi ini bersifat edukatif, bukan diagnosis medis.
+
+TANDA BAHAYA
+
+Sebutkan 4-5 sinyal tubuh spesifik yang TIDAK BOLEH diabaikan dan berkaitan langsung dengan kebiasaan di atas. Untuk setiap tanda bahaya, jelaskan:
+• [Sinyal tubuh] — kapan ini menjadi darurat dan apa yang harus dilakukan`,
+      outputs: ['ai-cegah-main', 'ai-cegah-flags'], splitOn: 'TANDA BAHAYA'
+    },
+    gejala: {
+      inputId: 'gejala-input', btnId: 'btn-gejala', loadingId: 'loading-gejala', resultId: 'result-gejala',
+      buildPrompt: inp => `Seorang pengguna sedang merasakan keluhan berikut dan butuh panduan awal yang aman:
+
+Keluhan: "${inp}"
+
+Tugasmu: Berikan panduan yang empatik, spesifik, dan aman. Ingat — kamu bukan dokter, jadi fokus pada edukasi dan panduan observasi, bukan diagnosis.
+
+PANDUAN AWAL
+
+• **Apa yang mungkin sedang terjadi:** Jelaskan 2-3 kemungkinan penyebab umum yang sering dikaitkan dengan keluhan ini. Gunakan bahasa "mungkin berkaitan dengan" atau "sering terjadi karena". JANGAN sebut nama penyakit spesifik seolah memastikan diagnosis.
+
+• **Yang bisa kamu lakukan sekarang:** Berikan 3-4 langkah konkret dan spesifik yang aman dilakukan di rumah. Bukan sekadar "istirahat yang cukup" — tapi instruksi yang jelas seperti: posisi tidur yang tepat, makanan/minuman yang membantu, kompres panas/dingin kapan dan berapa menit, dll.
+
+• **Yang sebaiknya dihindari:** 2-3 hal spesifik yang bisa memperburuk keluhan ini — bukan daftar umum, tapi yang benar-benar relevan dengan keluhan yang disebutkan.
+
+• **Kapan harus periksa ke dokter:** Sebutkan durasi atau kondisi yang sangat spesifik. Contoh: "jika tidak membaik dalam 3 hari", "jika disertai demam di atas 38.5°C", "jika muncul [gejala tambahan tertentu]".
+
+📚 Sumber referensi: [panduan klinis atau organisasi medis yang relevan dengan keluhan ini]
+⚕️ Informasi ini bersifat edukatif, bukan diagnosis medis.
+
+TANDA BAHAYA
+
+4-5 kondisi SPESIFIK yang memerlukan pertolongan medis segera (pergi ke UGD hari ini, jangan ditunda):
+• [Kondisi/gejala spesifik] — kenapa ini bisa berbahaya dan tidak boleh ditunggu`,
+      outputs: ['ai-gejala-main', 'ai-gejala-flags'], splitOn: 'TANDA BAHAYA'
+    },
+    kerokan: {
+      inputId: 'kerokan-input', btnId: 'btn-kerokan', loadingId: 'loading-kerokan', resultId: 'result-kerokan',
+      buildPrompt: inp => `Pengguna ingin tahu tentang pengobatan atau terapi tradisional Indonesia berikut ini:
+
+"${inp}"
+
+Tugasmu: Berikan evaluasi yang jujur, seimbang, tidak menghakimi budaya, tapi tetap berbasis bukti medis yang ada. Akui jika bukti ilmiahnya terbatas — jangan mengarang.
+
+EVALUASI
+
+• **Apa yang terjadi pada tubuh:** Jelaskan mekanisme yang mungkin terjadi secara fisiologis. Jika ada penelitian atau bukti ilmiah — sebutkan. Jika bukti terbatas, jelaskan dengan jujur: "penelitian tentang ini masih terbatas, namun secara anekdotal..."
+
+• **Manfaat yang mungkin dirasakan:** Apa yang membuat banyak orang merasa terbantu, dari sudut pandang ilmu kesehatan?
+
+• **Situasi di mana ini relatif aman:** Kondisi spesifik kapan pengobatan ini boleh dicoba tanpa risiko besar.
+
+• **Alternatif yang didukung bukti:** Pendekatan berbasis medis yang bisa dilakukan sebagai pelengkap atau pengganti.
+
+📚 Sumber referensi: [sebutkan sumber yang relevan]
+⚕️ Informasi ini bersifat edukatif, bukan rekomendasi medis.
+
+PERHATIAN DAN BATASAN
+
+Kondisi atau situasi yang membutuhkan kehati-hatian ekstra sebelum melakukan pengobatan ini:
+• [Kondisi] — [kenapa perlu hati-hati dan apa risikonya]
+
+JANGAN LAKUKAN BILA
+
+Kondisi medis spesifik di mana pengobatan ini kontraindikasi atau berpotensi berbahaya:
+• [Kondisi medis] — [risiko konkret yang bisa terjadi]`,
+      outputs: ['ai-kerokan-main', 'ai-kerokan-caution', 'ai-kerokan-flags'],
+      splitOn3: ['PERHATIAN DAN BATASAN', 'JANGAN LAKUKAN BILA']
+    },
+    diabaikan: {
+      inputId: 'diabaikan-input', btnId: 'btn-diabaikan', loadingId: 'loading-diabaikan', resultId: 'result-diabaikan',
+      buildPrompt: inp => `Pengguna sudah lama mengabaikan kondisi atau kebiasaan berikut:
+
+"${inp}"
+
+Tugasmu: Buat proyeksi edukatif tentang apa yang mungkin terjadi jika kondisi/kebiasaan ini terus dibiarkan. Proyeksi harus:
+- SPESIFIK dengan kondisi yang disebutkan — bukan proyeksi umum yang bisa berlaku untuk siapa saja
+- Menggunakan bahasa "mungkin", "berpotensi", "berisiko" — BUKAN kepastian
+- Realistis dan berbasis proses fisiologis yang diketahui ilmu kedokteran
+- JANGAN mengarang angka atau statistik — jika tidak tahu data pastinya, gunakan deskripsi kualitatif
+
+Pisahkan setiap periode dengan label PERSIS seperti ini (jangan tambahkan teks lain di depan label):
+
+1BULAN:
+[Apa yang mungkin mulai terjadi pada tubuh di bulan pertama — perubahan kecil yang mungkin sudah terasa]
+
+3BULAN:
+[Eskalasi dari bulan pertama — bagaimana gejala atau kondisi tubuh mungkin berkembang, dampak pada aktivitas sehari-hari]
+
+6BULAN:
+[Kemungkinan komplikasi awal yang mulai muncul — kapan sebaiknya sudah periksa ke dokter]
+
+1TAHUN:
+[Kondisi yang mungkin sudah berkembang lebih jauh — dampak pada kualitas hidup]
+
+3TAHUN:
+[Risiko jangka menengah berdasarkan proses patofisiologi yang diketahui]
+
+5TAHUN:
+[Risiko jangka panjang — sertakan referensi dari panduan medis atau penelitian yang relevan]`,
+      multiPeriod: true
+    },
+    hoax: {
+      inputId: 'hoax-input', btnId: 'btn-hoax', loadingId: 'loading-hoax', resultId: 'result-hoax',
+      buildPrompt: inp => `Tolong verifikasi klaim kesehatan berikut secara faktual:
+
+"${inp}"
+
+Berikan penilaian yang jujur dan berbasis bukti ilmiah yang ada. Jika kamu tidak memiliki informasi yang cukup untuk memastikan, akui keterbatasan itu.
+
+VERDIKT: [pilih SATU yang paling tepat: MITOS | PERLU KONTEKS | MENYESATKAN | SESUAI BUKTI SAAT INI]
+JUDUL: [satu kalimat ringkas yang langsung menjawab: apakah klaim ini benar, salah, atau perlu konteks]
+PENJELASAN: 
+Jelaskan secara faktual dengan struktur berikut:
+• **Apa yang benar dari klaim ini (jika ada):** ...
+• **Apa yang salah atau menyesatkan:** ...
+• **Apa yang sebenarnya terjadi menurut ilmu kedokteran:** ...
+• **Konteks penting yang sering diabaikan:** ...
+Sertakan referensi dari WHO, Kemenkes RI, IDAI, PAPDI, atau jurnal medis yang relevan jika tersedia.`,
+      isHoax: true
+    },
+    keluarga: { buildPromptFromMember: true }
+  };
+
+  const cfg = configs[type];
+  const inp = cfg.inputId ? document.getElementById(cfg.inputId).value.trim() : '';
+
+  if (type !== 'keluarga' && !inp) { alert('Mohon isi kolom terlebih dahulu.'); return; }
+
+  const btn     = cfg.btnId     ? document.getElementById(cfg.btnId)     : null;
+  const loading = cfg.loadingId ? document.getElementById(cfg.loadingId) : null;
+  const result  = cfg.resultId  ? document.getElementById(cfg.resultId)  : null;
+
+  if (btn)     btn.disabled = true;
+  if (loading) loading.style.display = 'flex';
+  if (result)  result.style.display  = 'none';
+
+  try {
+    const prompt   = cfg.buildPrompt ? cfg.buildPrompt(inp) : buildFamilyPrompt();
+    const response = await callAI(prompt);
+
+    if (type === 'hoax') {
+      parseHoaxResult(response);
+    } else if (type === 'diabaikan') {
+      parseDiabaikanResult(response);
+      document.getElementById('result-diabaikan').style.display = 'block';
+      return;
+    } else if (cfg.splitOn3) {
+      const parts = splitThree(response, cfg.splitOn3[0], cfg.splitOn3[1]);
+      renderAIText(cfg.outputs[0], parts[0].trim());
+      renderAIText(cfg.outputs[1], parts[1].trim());
+      renderAIText(cfg.outputs[2], parts[2].trim());
+    } else if (cfg.outputs && cfg.splitOn) {
+      const idx = response.indexOf(cfg.splitOn);
+      if (idx !== -1) {
+        renderAIText(cfg.outputs[0], response.substring(0, idx).replace(/^1\.\s*(PEMETAAN RISIKO AWAL|PANDUAN AWAL):?\n?/i, '').trim());
+        renderAIText(cfg.outputs[1], response.substring(idx).replace(/^TANDA BAHAYA:?\s*/i, '').replace(/^2\.\s*/,'').trim());
+      } else {
+        renderAIText(cfg.outputs[0], response);
+        renderAIText(cfg.outputs[1], 'Bila keluhan memburuk atau berlanjut lebih dari 2 minggu, segera konsultasikan ke dokter.');
+      }
+    } else if (type === 'keluarga') {
+      // Parse 3 sections
+      const i1 = response.search(/SARAN KESEHATAN KELUARGA:/i);
+      const i2 = response.search(/ANALISIS RISIKO GENETIK:/i);
+      const i3 = response.search(/LANGKAH PENCEGAHAN PERSONAL:/i);
+
+      let mainText       = response;
+      let riskText       = 'Berdasarkan riwayat penyakit keluarga, disarankan melakukan skrining kesehatan rutin. Konsultasikan ke dokter untuk evaluasi risiko lebih lanjut.';
+      let preventionText = 'Terapkan gaya hidup sehat: olahraga rutin, pola makan seimbang, hindari rokok, dan lakukan pemeriksaan kesehatan berkala.';
+
+      if (i1 !== -1 && i2 !== -1 && i3 !== -1) {
+        mainText       = response.substring(i1, i2).replace(/^SARAN KESEHATAN KELUARGA:\s*/i,'').trim();
+        riskText       = response.substring(i2, i3).replace(/^ANALISIS RISIKO GENETIK:\s*/i,'').trim();
+        preventionText = response.substring(i3).replace(/^LANGKAH PENCEGAHAN PERSONAL:\s*/i,'').trim();
+      } else if (i1 !== -1 && i2 !== -1) {
+        mainText = response.substring(i1, i2).replace(/^SARAN KESEHATAN KELUARGA:\s*/i,'').trim();
+        riskText = response.substring(i2).replace(/^ANALISIS RISIKO GENETIK:\s*/i,'').trim();
+      }
+
+      renderAIText('ai-kel-main', mainText);
+      renderAIText('ai-kel-risk', riskText);
+      renderAIText('ai-kel-prevention', preventionText);
+      document.getElementById('result-keluarga').style.display = 'block';
+      setTimeout(() => document.getElementById('result-keluarga').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+      return;
+    }
+
+    if (result) {
+      result.style.display = 'block';
+      setTimeout(() => result.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+  } catch (e) {
+    alert('Gagal terhubung ke AI: ' + e.message);
+    console.error(e);
+  } finally {
+    if (btn)     btn.disabled = false;
+    if (loading) loading.style.display = 'none';
+  }
+}
+
+function splitThree(text, sep1, sep2) {
+  const up = text.toUpperCase();
+  const i1 = up.indexOf(sep1.toUpperCase());
+  const i2 = up.indexOf(sep2.toUpperCase());
+  if (i1 === -1 || i2 === -1) return [text, '', ''];
+  const p1 = text.substring(0, i1).replace(/^1\.\s*EVALUASI:?\n?/i, '').trim();
+  const p2 = text.substring(i1, i2).replace(new RegExp('^2?\\.?\\s*' + sep1 + ':?\\s*', 'i'), '').trim();
+  const p3 = text.substring(i2).replace(new RegExp('^3?\\.?\\s*' + sep2 + ':?\\s*', 'i'), '').trim();
+  return [p1, p2, p3];
+}
+
+function parseHoaxResult(text) {
+  const verdiktMatch    = text.match(/VERDIKT:\s*(.+)/i);
+  const judulMatch      = text.match(/JUDUL:\s*(.+)/i);
+  const penjelasanMatch = text.match(/PENJELASAN:\s*([\s\S]+)/i);
+
+  const verdikt    = verdiktMatch    ? verdiktMatch[1].trim().toUpperCase()    : 'PERLU KONTEKS';
+  const judul      = judulMatch      ? judulMatch[1].trim()                    : 'Klaim ini memerlukan verifikasi lebih lanjut';
+  const penjelasan = penjelasanMatch ? penjelasanMatch[1].trim()               : text;
+
+  const card  = document.getElementById('verdict-card-hoax');
+  const label = document.getElementById('verdict-label-hoax');
+  const title = document.getElementById('verdict-title-hoax');
+  const main  = document.getElementById('ai-hoax-main');
+
+  card.className = 'verdict-card';
+  if (verdikt.includes('MITOS')) {
+    card.classList.add('v-mitos'); label.textContent = '⛔ Mitos';
+  } else if (verdikt.includes('MENYESATKAN')) {
+    card.classList.add('v-mitos'); label.textContent = '⚠️ Menyesatkan';
+  } else if (verdikt.includes('KONTEKS')) {
+    card.classList.add('v-konteks'); label.textContent = '⚠️ Perlu Konteks';
+  } else {
+    card.classList.add('v-valid'); label.textContent = '✅ Sesuai Bukti';
+  }
+  title.textContent = judul;
+  renderAIText(main.id || 'ai-hoax-main', penjelasan);
+
+  document.getElementById('result-hoax').style.display = 'block';
+  setTimeout(() => document.getElementById('result-hoax').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+function parseDiabaikanResult(text) {
+  const periods = ['1BULAN','3BULAN','6BULAN','1TAHUN','3TAHUN','5TAHUN'];
+  const ids     = ['ai-d-1m','ai-d-3m','ai-d-6m','ai-d-1y','ai-d-3y','ai-d-5y'];
+  periods.forEach((p, i) => {
+    const re = new RegExp(p + ':\\s*([\\s\\S]*?)(?=' + (periods[i+1] || '$') + ':|$)', 'i');
+    const m  = text.match(re);
+    renderAIText(ids[i], m ? m[1].trim() : 'Data tidak tersedia.');
+  });
+}
+
+function buildFamilyPrompt() {
+  if (!activeMember) return '';
+  const tags      = Array.from(document.querySelectorAll('#penyakit-selected .penyakit-tag')).map(t => t.dataset.name).filter(Boolean);
+  const penyakit  = tags.join(', ') || 'belum ada data';
+  const userAge   = document.getElementById('user-age-input')?.value || 'tidak disebutkan';
+  const userGender = document.querySelector('[data-val].selected[onclick*="gender"]')?.dataset.val || 'tidak disebutkan';
+  const userRokok  = document.querySelector('[data-val].selected[onclick*="rokok"]')?.dataset.val || 'tidak disebutkan';
+  const userOlahraga = document.querySelector('[data-val].selected[onclick*="olahraga"]')?.dataset.val || 'tidak disebutkan';
+  const userKondisi = document.getElementById('user-kondisi-input')?.value || 'tidak ada';
+
+  return `Tolong buat analisis kesehatan yang mendalam dan personal berdasarkan data ini:
+
+PROFIL ANGGOTA KELUARGA YANG DIPANTAU:
+- Nama: ${activeMember.name} (${activeMember.relation})
+- Usia: ${activeMember.age} tahun
+- Penyakit/kondisi yang diketahui: ${penyakit}
+
+PROFIL PENGGUNA APLIKASI (yang ingin tahu risikonya):
+- Usia: ${userAge} tahun
+- Jenis kelamin: ${userGender}
+- Status merokok: ${userRokok}
+- Aktivitas fisik: ${userOlahraga}
+- Kondisi kesehatan pribadi: ${userKondisi}
+
+Berikan analisis dalam 3 bagian dengan header PERSIS seperti ini:
+
+SARAN KESEHATAN KELUARGA:
+Berikan saran praktis dan spesifik untuk membantu anggota keluarga ini. Untuk setiap penyakit/kondisi yang disebutkan:
+• **[Nama kondisi]:** Hal konkret yang bisa dilakukan keluarga untuk mendukung — mulai dari pola makan, aktivitas, pemantauan rutin, hingga kapan perlu ke dokter segera.
+Akhiri dengan: 📚 Referensi: [sumber medis relevan] dan ⚕️ Ini informasi edukatif, bukan pengganti saran dokter.
+
+ANALISIS RISIKO GENETIK:
+Berikan analisis risiko untuk PENGGUNA berdasarkan riwayat keluarga dan profilnya. PENTING: jangan mengarang angka persentase yang tidak kamu yakini akuratnya — gunakan deskripsi kualitatif jika data spesifik tidak tersedia.
+• **[Nama kondisi]:** Apakah ada komponen genetik yang diketahui? Bagaimana profil pengguna (usia, gender, kebiasaan) mempengaruhi risikonya? Usia berapa sebaiknya mulai skrining? Sebutkan sumber jika ada data yang tersedia.
+
+LANGKAH PENCEGAHAN PERSONAL:
+Berikan 5-6 langkah pencegahan yang BENAR-BENAR dipersonalisasi untuk profil pengguna ini — bukan saran generik yang berlaku untuk semua orang.
+• **[Langkah spesifik]:** Kenapa ini penting KHUSUSNYA untuk profil ini → cara implementasi yang konkret dan realistis.
+Akhiri dengan rekomendasi pemeriksaan kesehatan rutin yang paling relevan untuk profil ini.`;
+}
+
+// ══════════════════════════════════════════════════════════
+// FAMILY MEMBERS
+// ══════════════════════════════════════════════════════════
+const memberEmoji = { Ayah:'👨‍🦳', Ibu:'👩‍🦳', Kakek:'🧓', Nenek:'👵', Saudara:'👦', Lainnya:'👤' };
+
+function addFamilyMember() {
+  const name    = document.getElementById('member-name-input').value.trim();
+  const age     = document.getElementById('member-age-input').value.trim();
+  const relOpt  = document.querySelector('#modal-add-member .q-opt.selected');
+  const relation = relOpt ? relOpt.getAttribute('data-rel') : 'Lainnya';
+
+  if (!name) { alert('Masukkan nama anggota keluarga.'); return; }
+
+  const member = { id: Date.now(), name, relation, age: age || '?', emoji: memberEmoji[relation] || '👤', diseases: [] };
+  familyMembers.push(member);
+  saveFamilyToCloud();
+
+  document.getElementById('member-name-input').value = '';
+  document.getElementById('member-age-input').value  = '';
+  closeModal('modal-add-member');
+  renderFamilyMembers();
+  showMemberDetail(member);
+}
+
+function renderFamilyMembers() {
+  const scroll = document.getElementById('member-scroll');
+
+  // Hapus chip lama (bukan self)
+  scroll.querySelectorAll('.fam-chip, .add-chip').forEach(c => c.remove());
+
+  familyMembers.forEach(m => {
+    const chip = document.createElement('div');
+    chip.className = 'member-chip fam-chip';
+    chip.innerHTML = `<div class="member-avatar">${m.emoji}</div><div class="member-name">${m.name.split(' ')[0]}</div>`;
+    chip.onclick = () => { selectMemberChip(chip); showMemberDetail(m); };
+    scroll.appendChild(chip);
+  });
+
+  // Add chip
+  const addChip = document.createElement('div');
+  addChip.className = 'member-chip add-chip';
+  addChip.innerHTML = `<div class="member-avatar">＋</div><div class="member-name">Tambah</div>`;
+  addChip.onclick = () => openModal('modal-add-member');
+  scroll.appendChild(addChip);
+
+  // Content area
+  const content = document.getElementById('family-content');
+  if (familyMembers.length === 0) {
+    content.innerHTML = `<div class="card" style="padding:28px;text-align:center;"><div style="font-size:40px;margin-bottom:12px">👨‍👩‍👧</div><div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">Tambahkan Anggota Keluarga</div><div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:18px">Catat kondisi orang tua atau anggota keluarga. AI akan memberi saran edukatif berdasarkan keluhan mereka.</div><button class="btn-main" style="padding:12px" onclick="openModal('modal-add-member')">Tambah Anggota</button></div>`;
+  } else {
+    renderFamilyCards();
+  }
+}
+
+function renderFamilyCards() {
+  const content = document.getElementById('family-content');
+  content.innerHTML = familyMembers.map(m => `
+    <div class="card radar-card card-tap" onclick='showMemberDetailById(${m.id})'>
+      <div class="radar-hdr">
+        <div>
+          <div class="radar-who">${m.emoji} ${m.name}, ${m.age} thn</div>
+          <div class="radar-since">${m.relation}</div>
+        </div>
+        <div class="badge ${m.diseases.length ? 'badge-warn' : 'badge-green'}">${m.diseases.length ? m.diseases.length + ' kondisi' : 'Belum ada data'}</div>
+      </div>
+      ${m.diseases.length > 0
+        ? `<div style="display:flex;gap:6px;flex-wrap:wrap">${m.diseases.map(d=>`<span class="badge badge-warn">${d}</span>`).join('')}</div>`
+        : '<div style="font-size:12.5px;color:var(--text3)">Ketuk untuk menambahkan penyakit / keluhan</div>'}
+    </div>
+  `).join('');
+}
+
+function showMemberDetailById(id) {
+  const m = familyMembers.find(fm => fm.id === id);
+  if (m) showMemberDetail(m);
+}
+
+function selectMemberChip(chip) {
+  document.querySelectorAll('.member-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+}
+
+function selectMember() {
+  document.querySelectorAll('.member-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('mc-self').classList.add('active');
+}
+
+function showMemberDetail(m) {
+  activeMember = familyMembers.find(fm => fm.id === m.id) || m;
+
+  document.getElementById('fam-detail-title').textContent = m.emoji + ' ' + m.name;
+  document.getElementById('fam-detail-sub').textContent   = m.relation + ' · ' + m.age + ' tahun';
+
+  // Update nama anggota di label form
+  const namaEl = document.getElementById('fam-detail-nama');
+  if (namaEl) namaEl.textContent = m.name;
+  document.querySelectorAll('.fam-name-ref').forEach(el => el.textContent = m.name);
+
+  const tagsEl = document.getElementById('penyakit-selected');
+  tagsEl.innerHTML = '';
+  (activeMember.diseases || []).forEach(d => addTagToUI(d));
+
+  document.getElementById('result-keluarga').style.display = 'none';
+  openModal('modal-family-detail');
+}
+
+function hapusMember() {
+  if (!activeMember) return;
+  if (!confirm('Hapus ' + activeMember.name + ' dari daftar keluarga?')) return;
+  familyMembers = familyMembers.filter(m => m.id !== activeMember.id);
+  activeMember = null;
+  saveFamilyToCloud();
+  renderFamilyMembers();
+  closeModal('modal-family-detail');
+}
+
+function addPenyakit() {
+  const inp = document.getElementById('penyakit-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  if (activeMember && !activeMember.diseases.includes(val)) {
+    activeMember.diseases.push(val);
+    saveFamilyToCloud();
+  }
+  addTagToUI(val);
+  inp.value = '';
+  renderFamilyCards();
+}
+
+function addTagToUI(name) {
+  const el = document.createElement('div');
+  el.className = 'penyakit-tag active';
+  el.setAttribute('data-name', name);
+  el.innerHTML = `${name} <span class="tag-x" onclick="removeTag(this,'${name.replace(/'/g,"\\'")}')">✕</span>`;
+  document.getElementById('penyakit-selected').appendChild(el);
+}
+
+function removeTag(el, name) {
+  el.closest('.penyakit-tag').remove();
+  if (activeMember) {
+    activeMember.diseases = activeMember.diseases.filter(d => d !== name);
+    saveFamilyToCloud();
+    renderFamilyCards();
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// SIMPAN DATA KELUARGA KE CLOUD / LOKAL
+// ══════════════════════════════════════════════════════════
+async function saveFamilyToCloud() {
+  const uid = currentUser?.uid || currentUser?.email || 'demo';
+  if (db && currentUser?.uid) {
+    try {
+      await db.collection('family').doc(currentUser.uid).set({ members: familyMembers });
+    } catch (e) {
+      console.warn('Firestore simpan gagal, pakai localStorage:', e.message);
+      LS.set('cg_family_' + uid, familyMembers);
+    }
+  } else {
+    LS.set('cg_family_' + uid, familyMembers);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// PROFILE EDIT & CHANGE PASSWORD
+// ══════════════════════════════════════════════════════════
+async function saveProfile() {
+  const name = document.getElementById('edit-name-input').value.trim();
+  if (!name) { alert('Masukkan nama.'); return; }
+
+  // Update displayName di Firebase Auth
+  if (auth.currentUser) {
+    try { await auth.currentUser.updateProfile({ displayName: name }); } catch {}
+  }
+
+  // Update Firestore
+  if (db && currentUser?.uid) {
+    try { await db.collection('users').doc(currentUser.uid).update({ name }); } catch {}
+  }
+
+  // Backup ke localStorage
+  if (currentUser?.uid) LS.set('cg_name_' + currentUser.uid, name);
+
+  currentUser.name = name;
+  updateUI();
+  closeModal('modal-edit-profile');
+}
+
+async function changePassword() {
+  const oldPw = document.getElementById('pw-old').value;
+  const newPw = document.getElementById('pw-new').value;
+  const newPw2 = document.getElementById('pw-new2').value;
+  const errEl  = document.getElementById('pw-error');
+  errEl.style.display = 'none';
+
+  if (newPw.length < 6) { showErr(errEl, 'Password baru minimal 6 karakter.'); return; }
+  if (newPw !== newPw2) { showErr(errEl, 'Konfirmasi password tidak cocok.'); return; }
+
+  if (auth.currentUser) {
+    try {
+      const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, oldPw);
+      await auth.currentUser.reauthenticateWithCredential(cred);
+      await auth.currentUser.updatePassword(newPw);
+      ['pw-old','pw-new','pw-new2'].forEach(id => document.getElementById(id).value = '');
+      closeModal('modal-change-pw');
+      alert('Password berhasil diubah!');
+    } catch (e) {
+      const msgs = {
+        'auth/wrong-password':     'Password lama tidak cocok.',
+        'auth/weak-password':      'Password baru terlalu lemah.',
+        'auth/too-many-requests':  'Terlalu banyak percobaan. Coba lagi nanti.',
+        'auth/network-request-failed': 'Tidak ada koneksi internet.'
+      };
+      showErr(errEl, msgs[e.code] || 'Gagal mengubah password. Coba lagi.');
+    }
+  }
+}
+
+// ══════════════════════════════════
+// PANTAU TAB SWITCHING
+// ══════════════════════════════════
+function switchPantauTab(name) {
+  ['jurnal','plan','warisan'].forEach(t => {
+    document.getElementById('tab-'+t)?.classList.remove('active');
+    document.getElementById('panel-'+t)?.classList.remove('active');
+  });
+  document.getElementById('tab-'+name)?.classList.add('active');
+  document.getElementById('panel-'+name)?.classList.add('active');
+}
+
+// ══════════════════════════════════
+// JURNAL SINYAL TUBUH
+// ══════════════════════════════════
+let jurnalData = [];
+let currentIntensitas = 0;
+
+function setIntensitas(val) {
+  currentIntensitas = val;
+  document.querySelectorAll('#int-bar .int-dot').forEach((d, i) => {
+    d.className = 'int-dot';
+    if (i < val) d.classList.add('active-' + val);
+  });
+  const labels = ['','Sangat ringan','Ringan','Ringan','Sedang','Sedang','Sedang','Agak berat','Berat','Sangat berat','Luar biasa berat'];
+  document.getElementById('int-label-text').textContent = val + '/10 — ' + labels[val];
+}
+
+function toggleJurnalTag(el) { el.classList.toggle('selected'); }
+
+async function simpanJurnal() {
+  const gejala = document.getElementById('jurnal-gejala').value.trim();
+  if (!gejala) { alert('Masukkan gejala yang dirasakan.'); return; }
+  const selectedTags = Array.from(document.querySelectorAll('#modal-jurnal-input .q-opt.selected')).map(el => el.dataset.tag).filter(Boolean);
+  const entry = { id: Date.now(), tanggal: new Date().toISOString(), gejala, lokasi: document.getElementById('jurnal-lokasi').value.trim(), intensitas: currentIntensitas || 0, pemicu: selectedTags, catatan: document.getElementById('jurnal-catatan').value.trim() };
+  jurnalData.unshift(entry);
+  await saveJurnalToCloud();
+  renderJurnal();
+  closeModal('modal-jurnal-input');
+  document.getElementById('jurnal-gejala').value = '';
+  document.getElementById('jurnal-lokasi').value = '';
+  document.getElementById('jurnal-catatan').value = '';
+  currentIntensitas = 0;
+  document.querySelectorAll('#int-bar .int-dot').forEach(d => d.className = 'int-dot');
+  document.getElementById('int-label-text').textContent = 'Ketuk untuk pilih intensitas';
+  document.querySelectorAll('#modal-jurnal-input .q-opt').forEach(d => d.classList.remove('selected'));
+}
+
+async function hapusJurnal(id) {
+  jurnalData = jurnalData.filter(e => e.id !== id);
+  await saveJurnalToCloud();
+  renderJurnal();
+}
+
+function renderJurnal() {
+  const list = document.getElementById('jurnal-list');
+  if (!list) return;
+  const now = new Date();
+  const count = jurnalData.filter(e => { const d = new Date(e.tanggal); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); }).length;
+  document.getElementById('jurnal-count').textContent = count;
+  let streak = 0;
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i=0;i<30;i++) {
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    if (jurnalData.some(e=>{ const ed=new Date(e.tanggal);ed.setHours(0,0,0,0);return ed.getTime()===d.getTime();})) streak++; else break;
+  }
+  document.getElementById('jurnal-streak').textContent = streak;
+  if (jurnalData.length===0) { list.innerHTML='<div class="jurnal-empty"><div style="font-size:36px;margin-bottom:12px">📓</div><div>Belum ada catatan gejala.</div></div>'; return; }
+  const ic = v => v<=3?'#22C55E':v<=6?'#D97706':v<=8?'#F97316':'#DC2626';
+  list.innerHTML = jurnalData.slice(0,20).map(e => {
+    const d=new Date(e.tanggal);
+    const tgl=d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    const jam=d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    const tags=e.pemicu?.length?e.pemicu.map(t=>`<span class="badge badge-warn" style="font-size:10.5px;padding:3px 8px">${t}</span>`).join(''):'';
+    return `<div class="jurnal-entry"><div class="jurnal-entry-header"><div class="jurnal-entry-date">📅 ${tgl} · ${jam}</div><div class="jurnal-entry-del" onclick="hapusJurnal(${e.id})">🗑️</div></div><div class="jurnal-entry-gejala">${e.gejala}</div>${e.lokasi?`<div class="jurnal-entry-detail">📍 ${e.lokasi}</div>`:''} ${e.intensitas?`<div class="jurnal-entry-detail" style="color:${ic(e.intensitas)}">⚡ Intensitas ${e.intensitas}/10</div>`:''} ${tags?`<div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">${tags}</div>`:''} ${e.catatan?`<div class="jurnal-entry-detail" style="margin-top:6px;font-style:italic">💬 ${e.catatan}</div>`:''}</div>`;
+  }).join('');
+}
+
+async function saveJurnalToCloud() {
+  const uid=currentUser?.uid;
+  if(db&&uid){try{await db.collection('journal').doc(uid).set({entries:jurnalData.slice(0,100)});}catch(e){LS.set('cg_jurnal_'+uid,jurnalData);}}
+  else{LS.set('cg_jurnal_'+(uid||'demo'),jurnalData);}
+}
+
+async function loadJurnal() {
+  const uid=currentUser?.uid;
+  if(db&&uid){try{const s=await db.collection('journal').doc(uid).get();jurnalData=s.exists?(s.data().entries||[]):[];}catch{jurnalData=LS.get('cg_jurnal_'+uid)||[];}}
+  else{jurnalData=LS.get('cg_jurnal_'+(uid||'demo'))||[];}
+  renderJurnal();
+}
+
+// ══════════════════════════════════
+// PREVENTION PLAN
+// ══════════════════════════════════
+let planData = null;
+
+async function buatPlan() {
+  const tujuanEl = document.querySelector('#plan-tujuan-opts .q-opt.selected');
+  const tujuan   = tujuanEl ? tujuanEl.dataset.val : 'Menjaga kesehatan secara umum';
+  const kondisi  = document.getElementById('plan-kondisi').value.trim() || 'tidak disebutkan';
+  const allOpts  = document.querySelectorAll('#modal-plan-input .q-options:last-of-type .q-opt.selected');
+  const sibuk    = allOpts.length ? allOpts[0].dataset.val : 'Cukup sibuk';
+  const btn  = document.getElementById('btn-buat-plan');
+  const load = document.getElementById('loading-plan');
+  btn.style.display = 'none';
+  load.style.display = 'flex';
+
+  // Ambil data jurnal 7 hari terakhir
+  const now7 = new Date();
+  const recent = jurnalData.filter(function(e) {
+    return (now7 - new Date(e.tanggal)) < 7 * 24 * 60 * 60 * 1000;
+  }).slice(0, 5);
+  const jurnalCtx = recent.length > 0
+    ? 'Gejala 7 hari terakhir dari jurnal: ' + recent.map(function(e) {
+        return e.gejala + (e.pemicu && e.pemicu.length ? ' (pemicu: ' + e.pemicu.join(', ') + ')' : '') + ' [intensitas ' + (e.intensitas || '?') + '/10]';
+      }).join('; ')
+    : 'Belum ada catatan jurnal gejala';
+
+  // Ambil risiko warisan
+  var warisanRisks = [];
+  Object.values(warisanData).forEach(function(v) {
+    if (v.penyakit && v.penyakit.length) warisanRisks = warisanRisks.concat(v.penyakit);
+  });
+  var uniqueRisks = warisanRisks.filter(function(v, i, a) { return a.indexOf(v) === i; });
+  var warisanCtx = uniqueRisks.length > 0 ? 'Riwayat penyakit keluarga yang perlu diwaspadai: ' + uniqueRisks.join(', ') : '';
+
+  var promptText = 'Buatkan Prevention Plan 7 hari yang SANGAT PERSONAL berdasarkan data berikut:\n\n'
+    + 'Tujuan utama: ' + tujuan + '\n'
+    + 'Kondisi & kebiasaan saat ini: ' + kondisi + '\n'
+    + 'Tingkat kesibukan: ' + sibuk + '\n'
+    + jurnalCtx + '\n'
+    + (warisanCtx ? warisanCtx + '\n' : '')
+    + '\nPENTING: Sesuaikan tugas dengan gejala jurnal dan riwayat keluarga jika ada.'
+    + ' Tugas harus SPESIFIK dan REALISTIS (bukan "olahraga" tapi "jalan kaki 20 menit setelah makan siang").'
+    + ' Hari awal lebih mudah, meningkat bertahap.\n\n'
+    + 'Format JSON PERSIS ini (tanpa teks lain di luar JSON):\n'
+    + '{"judul":"judul plan singkat yang personal","hari":['
+    + '{"hari":1,"tema":"tema singkat","tugas":["tugas spesifik 1","tugas spesifik 2","tugas spesifik 3"]},'
+    + '{"hari":2,"tema":"tema hari 2","tugas":["tugas 1","tugas 2","tugas 3"]}'
+    + ']}\n'
+    + 'Buat semua 7 hari lengkap.';
+
+  try {
+    var resp = await callAI(promptText);
+    var m = resp.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('Format JSON tidak valid dari AI');
+    var parsed = JSON.parse(m[0]);
+    planData = Object.assign({}, parsed, {
+      dibuat: new Date().toISOString(),
+      progress: {},
+      basedOn: { tujuan: tujuan, jurnalCtx: jurnalCtx, warisanCtx: warisanCtx }
+    });
+    await savePlanToCloud();
+    renderPlan();
+    closeModal('modal-plan-input');
+  } catch(e) {
+    alert('Gagal membuat plan: ' + e.message + '. Coba lagi.');
+  } finally {
+    btn.style.display = 'block';
+    load.style.display = 'none';
+  }
+}
+
+
+function renderPlan() {
+  if (!planData) return;
+  document.getElementById('plan-empty-state').style.display = 'none';
+  document.getElementById('plan-content').style.display = 'block';
+  document.getElementById('plan-title').textContent = planData.judul || 'Prevention Plan 7 Hari';
+  var tgl = new Date(planData.dibuat).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('plan-date').textContent = 'Dibuat ' + tgl;
+
+  var ctxEl = document.getElementById('plan-context');
+  if (ctxEl && planData.basedOn) {
+    var parts = [];
+    if (planData.basedOn.jurnalCtx && planData.basedOn.jurnalCtx.indexOf('Belum') === -1) parts.push('\u{1F4D3} Berbasis jurnal');
+    if (planData.basedOn.warisanCtx) parts.push('\u{1F333} Mempertimbangkan riwayat keluarga');
+    ctxEl.textContent = parts.join(' \u00B7 ');
+    ctxEl.style.display = parts.length ? 'block' : 'none';
+  }
+
+  var all  = planData.hari.reduce(function(a,h){return a+h.tugas.length;},0);
+  var done = Object.values(planData.progress||{}).filter(Boolean).length;
+  var pct  = all ? Math.round(done/all*100) : 0;
+  document.getElementById('plan-pct').textContent = pct + '%';
+  document.getElementById('plan-bar').style.width  = pct + '%';
+
+  var html = '';
+  for (var hi = 0; hi < planData.hari.length; hi++) {
+    var h = planData.hari[hi];
+    var dd = 0;
+    var taskHtml = '';
+    for (var ti = 0; ti < h.tugas.length; ti++) {
+      var k = h.hari + '-' + ti;
+      var isDone = !!(planData.progress && planData.progress[k]);
+      if (isDone) dd++;
+      taskHtml += '<div class="plan-task">'
+        + '<div class="plan-task-check' + (isDone?' done':'') + '" onclick="togglePlanTask(\'' + k + '\')">' + (isDone?'\u2713':'') + '</div>'
+        + '<div class="plan-task-text' + (isDone?' done':'') + '">' + h.tugas[ti] + '</div>'
+        + '</div>';
+    }
+    var allDone = dd === h.tugas.length;
+    html += '<div class="plan-day">'
+      + '<div class="plan-day-header" onclick="togglePlanDay(' + h.hari + ')">'
+      + '<div class="plan-day-num">H' + h.hari + '</div>'
+      + '<div><div class="plan-day-title">' + h.tema + '</div>'
+      + '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + dd + '/' + h.tugas.length + ' selesai</div></div>'
+      + '<div class="plan-day-status">' + (allDone?'\u2705':'\u2B55') + '</div>'
+      + '</div>'
+      + '<div class="plan-day-body" id="plan-day-body-' + h.hari + '">' + taskHtml + '</div>'
+      + '</div>';
+  }
+  document.getElementById('plan-days-list').innerHTML = html;
+}
+
+
+
+function togglePlanDay(h){document.getElementById('plan-day-body-'+h)?.classList.toggle('open');}
+
+async function togglePlanTask(key){
+  if(!planData)return;
+  planData.progress=planData.progress||{};
+  planData.progress[key]=!planData.progress[key];
+  await savePlanToCloud();
+  renderPlan();
+}
+
+async function savePlanToCloud(){
+  const uid=currentUser?.uid;
+  if(db&&uid){try{await db.collection('plans').doc(uid).set(planData);}catch{LS.set('cg_plan_'+uid,planData);}}
+  else{LS.set('cg_plan_'+(uid||'demo'),planData);}
+}
+
+async function loadPlan(){
+  const uid=currentUser?.uid;
+  if(db&&uid){try{const s=await db.collection('plans').doc(uid).get();planData=s.exists?s.data():null;}catch{planData=LS.get('cg_plan_'+uid)||null;}}
+  else{planData=LS.get('cg_plan_'+(uid||'demo'))||null;}
+  if(planData)renderPlan();
+}
+
+// ══════════════════════════════════
+// WARISAN SEHAT
+// ══════════════════════════════════
+let warisanData={};
+let currentWarisanNode=null;
+const warisanNodeMap={'Kakek (dari Ayah)':'tn-kakek-ayah','Nenek (dari Ayah)':'tn-nenek-ayah','Kakek (dari Ibu)':'tn-kakek-ibu','Nenek (dari Ibu)':'tn-nenek-ibu','Ayah':'tn-ayah','Ibu':'tn-ibu'};
+
+function openWarisanModal(nama,emoji){
+  currentWarisanNode=nama;
+  document.getElementById('warisan-node-title').textContent=emoji+' '+nama;
+  document.getElementById('warisan-node-tags').innerHTML='';
+  document.getElementById('warisan-node-input').value='';
+  const ex=warisanData[nama];
+  if(ex?.penyakit){ex.penyakit.forEach(p=>addWarisanTagToUI(p));document.querySelectorAll('#modal-warisan-node .q-opt').forEach(o=>o.classList.toggle('selected',o.dataset.val===ex.status));}
+  openModal('modal-warisan-node');
+}
+
+function addWarisanTag(){const inp=document.getElementById('warisan-node-input');const v=inp.value.trim();if(!v)return;addWarisanTagToUI(v);inp.value='';}
+
+function addWarisanTagToUI(name){const el=document.createElement('div');el.className='penyakit-tag active';el.setAttribute('data-name',name);el.innerHTML=`${name} <span class="tag-x" onclick="this.closest('.penyakit-tag').remove()">✕</span>`;document.getElementById('warisan-node-tags').appendChild(el);}
+
+async function simpanWarisanNode(){
+  const penyakit=Array.from(document.querySelectorAll('#warisan-node-tags .penyakit-tag')).map(t=>t.dataset.name).filter(Boolean);
+  const statusEl=document.querySelector('#modal-warisan-node .q-opt.selected');
+  const status=statusEl?.dataset.val||'Tidak diketahui';
+  warisanData[currentWarisanNode]={penyakit,status};
+  const nodeEl=document.getElementById(warisanNodeMap[currentWarisanNode]);
+  if(nodeEl)nodeEl.classList.toggle('has-data',penyakit.length>0);
+  await saveWarisanToCloud();
+  closeModal('modal-warisan-node');
+  const hasData=Object.values(warisanData).some(v=>v.penyakit?.length>0);
+  document.getElementById('btn-warisan-analisis').style.display=hasData?'block':'none';
+  document.getElementById('warisan-no-data').style.display=hasData?'none':'block';
+}
+
+async function runWarisanAI(){
+  const btn=document.getElementById('btn-warisan-analisis');
+  const load=document.getElementById('loading-warisan');
+  btn.style.display='none';load.style.display='flex';
+  const dataStr=Object.entries(warisanData).filter(([,v])=>v.penyakit&&v.penyakit.length>0).map(([n,v])=>'- '+n+': '+v.penyakit.join(', ')+' ('+v.status+')').join('\n');
+  const prompt='Analisis riwayat penyakit keluarga berikut:\n'+dataStr+'\n\nBerikan:\n1. Risiko genetik dalam format (awali dengan "RISIKO:"):\nNAMA_PENYAKIT|low/medium/high\n(satu per baris)\n\n2. Rekomendasi pencegahan (awali dengan "SARAN:")\n\nGunakan bahasa empatik. Ingatkan riwayat keluarga bukan vonis. Sertakan referensi medis.';
+  try {
+    const resp=await callAI(prompt);
+    const rm=resp.match(/RISIKO:([\s\S]*?)SARAN:/i);
+    const sm=resp.match(/SARAN:([\s\S]*)/i);
+    if(rm){
+      const chips=rm[1].trim().split('\n').filter(Boolean).map(function(r){
+        var parts=r.replace(/^-\s*/,'').split('|');
+        var nama=parts[0];var level=parts[1];
+        var cls=level&&level.trim()==='high'?'risk-high':level&&level.trim()==='medium'?'risk-med':'risk-low';
+        var icon=level&&level.trim()==='high'?'\uD83D\uDD34':level&&level.trim()==='medium'?'\uD83D\uDFE1':'\uD83D\uDFE2';
+        return '<span class="risk-chip '+cls+'">'+icon+' '+(nama?nama.trim():r.trim())+'</span>';
+      }).join('');
+      document.getElementById('warisan-chips').innerHTML=chips;
+    }
+    renderAIText('warisan-ai-text',sm?sm[1].trim():resp);
+    document.getElementById('warisan-result').style.display='block';
+    document.getElementById('warisan-no-data').style.display='none';
+  } catch(e){alert('Gagal analisis: '+e.message);}
+  finally{btn.style.display='block';load.style.display='none';}
+}
+
+async function saveWarisanToCloud(){
+  const uid=currentUser?.uid;
+  if(db&&uid){try{await db.collection('heritage').doc(uid).set(warisanData);}catch{LS.set('cg_warisan_'+uid,warisanData);}}
+  else{LS.set('cg_warisan_'+(uid||'demo'),warisanData);}
+}
+
+async function loadWarisan(){
+  const uid=currentUser?.uid;
+  if(db&&uid){try{const s=await db.collection('heritage').doc(uid).get();warisanData=s.exists?s.data():{};}catch{warisanData=LS.get('cg_warisan_'+uid)||{};}}
+  else{warisanData=LS.get('cg_warisan_'+(uid||'demo'))||{};}
+  Object.entries(warisanData).forEach(([n,v])=>{const el=document.getElementById(warisanNodeMap[n]);if(el)el.classList.toggle('has-data',v.penyakit?.length>0);});
+  const hasData=Object.values(warisanData).some(v=>v.penyakit?.length>0);
+  const btnEl=document.getElementById('btn-warisan-analisis');
+  const ndEl=document.getElementById('warisan-no-data');
+  if(btnEl)btnEl.style.display=hasData?'block':'none';
+  if(ndEl)ndEl.style.display=hasData?'none':'block';
+}
+
+// ══════════════════════════════════
+// LOAD DATA FASE 2 SETELAH LOGIN
+// ══════════════════════════════════
+const _base_loginSuccess = loginSuccess;
+loginSuccess = async function(user) {
+  await _base_loginSuccess(user);
+  const nameEl=document.getElementById('warisan-self-name');
+  if(nameEl)nameEl.textContent=user.name?.split(' ')[0]||'Saya';
+  setTimeout(async()=>{
+    await loadJurnal();
+    await loadPlan();
+    await loadWarisan();
+  },600);
+};
+</script>
+</body>
+</html>
